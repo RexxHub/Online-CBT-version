@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Rexx Hub Teachers</title><link rel="icon" href="favicon.png">
+<style>
+:root{--ink:#14213d;--soft:#4a5568;--muted:#7b8498;--bg:#f4f5f9;--card:#fff;--line:#e2e5ee;--accent:#e85d04;--teal:#0b7a75;--ok:#1b7f4b;--bad:#c0392b}
+*{box-sizing:border-box}body{margin:0;font:15px/1.5 "Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
+header{background:var(--ink);color:#fff;display:flex;align-items:center;gap:12px;padding:10px 20px;flex-wrap:wrap}
+header img{height:34px}header b{font-size:18px}header nav{margin-left:auto;display:flex;gap:16px;align-items:center}
+header a,header button{color:#fff;background:none;border:0;font:inherit;cursor:pointer;text-decoration:none;opacity:.85}header a:hover,header button:hover{opacity:1;text-decoration:underline}
+main{flex:1;width:100%;max-width:1000px;margin:0 auto;padding:20px}
+footer{text-align:center;color:var(--muted);font-size:13px;padding:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:16px}
+h1,h2{margin:0 0 12px}h1{font-size:22px}h2{font-size:18px}
+table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--soft);font-weight:600;font-size:13px}
+.scroll{overflow-x:auto}a{color:var(--teal)}
+input,select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;width:100%;margin:4px 0 12px}
+button.b,a.b{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:8px 16px;font:inherit;cursor:pointer;text-decoration:none}
+button.b:hover,a.b:hover{background:#c04a00}button.g{background:#fff;color:var(--ink);border:1px solid var(--line)}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:16px}.stats div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
+.stats b{display:block;font-size:22px}.stats span{color:var(--muted);font-size:13px}
+.tabs{display:flex;gap:6px;margin-bottom:14px}.tabs a{padding:6px 14px;border-radius:6px;text-decoration:none;color:var(--ink);background:#e9ebf3}.tabs a.on{background:var(--ink);color:#fff}
+.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}.muted{color:var(--muted)}.msg{padding:10px 12px;border-radius:6px;background:#fff1e6;margin:10px 0}
+.q{border-bottom:1px solid var(--line);padding:10px 0}.q:last-child{border:0}.w{max-width:380px;margin:40px auto}
+</style></head><body>
+<header><img src="logo.png" alt=""><b>Rexx Hub</b><span>Teachers</span><nav id="nav"></nav></header>
+<main id="app"></main>
+<footer>Built by Solomon Chukwuemeka, C.E.O, Rexx Hub</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+const SUPABASE_URL = "PASTE_YOUR_PROJECT_URL";
+const SUPABASE_KEY = "PASTE_YOUR_ANON_PUBLIC_KEY";
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const app = document.getElementById("app");
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fdt = t => t ? new Date(t).toLocaleString() : "";
+const pct = a => a.total ? a.score / a.total * 100 : 0;
+let me = null;
+
+async function all(table, sel, f) {
+  let out = [], from = 0;
+  for (;;) {
+    let q = sb.from(table).select(sel).range(from, from + 999);
+    if (f) q = f(q);
+    const { data, error } = await q;
+    if (error) throw error;
+    out = out.concat(data);
+    if (data.length < 1000) return out;
+    from += 1000;
+  }
+}
+function nav() {
+  const n = document.getElementById("nav");
+  if (!me) { n.innerHTML = ""; return; }
+  n.innerHTML = `<a href="#/">Exams</a>` + (me.role === "admin" ? `<a href="#/upload">Upload results</a><a href="#/teachers">Teachers</a>` : "") +
+    `<span class="muted">${esc(me.full_name)}</span><button id="out">Sign out</button>`;
+  document.getElementById("out").onclick = async () => { await sb.auth.signOut(); me = null; route(); };
+}
+function loginView(signup, msg) {
+  app.innerHTML = `<div class="card w"><h2>${signup ? "Create teacher account" : "Teacher sign in"}</h2>
+  <form id="f">${signup ? `<label>Full name<input id="fn" required></label>
+  <label>Your username in the exam app<input id="un" required></label>` : ""}
+  <label>Email<input id="em" type="email" required></label>
+  <label>Password<input id="pw" type="password" minlength="8" required></label>
+  <button class="b">${signup ? "Create account" : "Sign in"}</button></form>
+  <p>${msg ? `<span class="msg">${esc(msg)}</span><br>` : ""}<a href="#" id="sw">${signup ? "I already have an account" : "Create a teacher account"}</a></p></div>`;
+  document.getElementById("sw").onclick = e => { e.preventDefault(); loginView(!signup); };
+  document.getElementById("f").onsubmit = async e => {
+    e.preventDefault();
+    const em = document.getElementById("em").value, pw = document.getElementById("pw").value;
+    if (signup) {
+      const { error } = await sb.auth.signUp({ email: em, password: pw, options: { data: { full_name: document.getElementById("fn").value, offline_username: document.getElementById("un").value } } });
+      if (error) return loginView(true, error.message);
+      return loginView(false, "Account created. Check your email if asked to confirm, then sign in. The admin must approve you before you see results.");
+    }
+    const { error } = await sb.auth.signInWithPassword({ email: em, password: pw });
+    if (error) return loginView(false, error.message);
+    route();
+  };
+}
+async function route() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { me = null; nav(); return loginView(false); }
+  if (!me) { const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).single(); me = data; }
+  nav();
+  if (!me || me.status !== "approved") { app.innerHTML = `<div class="card w"><h2>Waiting for approval</h2><p>Your account has not been approved yet. Ask the school admin to approve it, then refresh this page.</p></div>`; return; }
+  const h = location.hash.slice(1) || "/", p = h.split("/");
+  app.innerHTML = `<p class="muted">Loading…</p>`;
+  try {
+    if (h === "/upload" && me.role === "admin") return await uploadView();
+    if (h === "/teachers" && me.role === "admin") return await teachersView();
+    if (p[1] === "exam" && p[3] === "attempt") return await attemptView(+p[2], +p[4]);
+    if (p[1] === "exam") return await examView(+p[2], p[3] || "results");
+    return await examsView();
+  } catch (e) { app.innerHTML = `<div class="card"><b>Something went wrong.</b> ${esc(e.message)}</div>`; }
+}
+async function examsView() {
+  const ex = await all("exams", "*", q => q.order("id", { ascending: false }));
+  const at = await all("attempts", "id,exam_id,score,total", q => q.order("id"));
+  let rows = ex.map(e => {
+    const a = at.filter(x => x.exam_id === e.id), ps = a.map(pct);
+    const avg = ps.length ? (ps.reduce((s, v) => s + v, 0) / ps.length).toFixed(1) + "%" : "–";
+    const pass = ps.length ? Math.round(ps.filter(v => v >= e.pass_mark).length / ps.length * 100) + "%" : "–";
+    return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.subject)}</td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${a.length}</td><td>${avg}</td><td>${pass}</td></tr>`;
+  }).join("");
+  app.innerHTML = `<h1>Your exams</h1><div class="card scroll">${ex.length ? `<table><tr><th>Exam</th><th>Subject</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th></tr>${rows}</table>` : `<p>No exams yet. Results appear here after the school admin uploads them.</p>`}</div>`;
+}
+async function examView(id, tab) {
+  const { data: e } = await sb.from("exams").select("*").eq("id", id).single();
+  if (!e) throw new Error("Exam not found.");
+  const at = await all("attempts", "*", q => q.eq("exam_id", id).order("student_name"));
+  const ps = at.map(pct), n = ps.length;
+  const st = n ? [(ps.reduce((s, v) => s + v, 0) / n).toFixed(1) + "%", Math.max(...ps).toFixed(1) + "%", Math.min(...ps).toFixed(1) + "%", Math.round(ps.filter(v => v >= e.pass_mark).length / n * 100) + "%"] : ["–", "–", "–", "–"];
+  let body = "";
+  if (tab === "results") {
+    body = `<div class="card scroll"><table><tr><th>Student</th><th>ID</th><th>Class</th><th>Score</th><th>%</th><th>Result</th><th>Tab switches</th><th></th></tr>` +
+      at.map(a => { const p = pct(a); return `<tr><td>${esc(a.student_name)}</td><td>${esc(a.student_username)}</td><td>${esc(a.class_name)}</td><td>${a.score}/${a.total}</td><td>${p.toFixed(1)}</td><td class="${p >= e.pass_mark ? "ok" : "bad"}">${p >= e.pass_mark ? "Pass" : "Fail"}</td><td>${a.tab_switches}</td><td><a href="#/exam/${id}/attempt/${a.id}">Review</a></td></tr>`; }).join("") +
+      `</table></div><button class="b" id="csv">Download CSV</button>`;
+  } else {
+    const qs = await all("questions", "*", q => q.eq("exam_id", id).order("pos"));
+    if (tab === "questions") {
+      body = `<div class="card">` + qs.map((q, i) => `<div class="q"><b>${i + 1}. ${esc(q.qtext)}</b> <span class="muted">(${q.marks} mark${q.marks == 1 ? "" : "s"})</span>` +
+        (q.qtype === "mcq" ? `<br>${(q.options || []).map((o, k) => `${"ABCDE"[k]}. ${esc(o)}`).join("<br>")}` : "") + `<br><span class="ok">Answer: ${esc(q.answer)}</span></div>`).join("") + `</div>`;
+    } else {
+      const an = await all("answers", "attempt_id,question_id,correct", q => q.eq("exam_id", id).order("attempt_id").order("question_id"));
+      body = `<div class="card scroll"><table><tr><th>Question</th><th>Got it right</th><th>Difficulty</th></tr>` + qs.map((q, i) => {
+        const r = n ? Math.round(an.filter(x => x.question_id === q.id && x.correct).length / n * 100) : 0;
+        return `<tr><td style="white-space:normal">${i + 1}. ${esc(q.qtext.slice(0, 90))}</td><td>${r}%</td><td>${r >= 70 ? "Easy" : r >= 40 ? "Moderate" : "Hard"}</td></tr>`;
+      }).join("") + `</table></div>`;
+    }
+  }
+  app.innerHTML = `<p><a href="#/">← All exams</a></p><h1>${esc(e.title)}</h1><p class="muted">${esc(e.subject)} ${esc(e.target_class)} · pass mark ${e.pass_mark}% · ${e.duration_min} min</p>
+  <div class="stats"><div><b>${n}</b><span>Students</span></div><div><b>${st[0]}</b><span>Average</span></div><div><b>${st[1]}</b><span>Highest</span></div><div><b>${st[2]}</b><span>Lowest</span></div><div><b>${st[3]}</b><span>Pass rate</span></div></div>
+  <div class="tabs">${["results", "analysis", "questions"].map(t => `<a href="#/exam/${id}/${t}" class="${t === tab ? "on" : ""}">${t[0].toUpperCase() + t.slice(1)}</a>`).join("")}</div>${body}`;
+  const b = document.getElementById("csv");
+  if (b) b.onclick = () => {
+    const rows = [["Student ID", "Name", "Class", "Score", "Total", "Percent", "Result", "Submitted", "Tab switches"]].concat(at.map(a => [a.student_username, a.student_name, a.class_name, a.score, a.total, pct(a).toFixed(1), pct(a) >= e.pass_mark ? "PASS" : "FAIL", fdt(a.submitted_at), a.tab_switches]));
+    const csv = "\ufeff" + rows.map(r => r.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n");
+    const l = document.createElement("a"); l.href = URL.createObjectURL(new Blob([csv], { type: "text/csv" })); l.download = "results-" + e.title.replace(/\W+/g, "_") + ".csv"; l.click();
+  };
+}
+async function attemptView(eid, aid) {
+  const { data: a } = await sb.from("attempts").select("*").eq("id", aid).single();
+  const qs = await all("questions", "*", q => q.eq("exam_id", eid).order("pos"));
+  const an = await all("answers", "*", q => q.eq("attempt_id", aid).order("question_id"));
+  if (!a) throw new Error("Attempt not found.");
+  const show = (q, v) => v == null || v === "" ? "No answer" : q.qtype === "mcq" ? `${esc(v)}. ${esc((q.options || [])["ABCDE".indexOf(String(v).toUpperCase())] ?? "")}` : esc(v);
+  app.innerHTML = `<p><a href="#/exam/${eid}">← Back to results</a></p><h1>${esc(a.student_name)}</h1><p class="muted">${esc(a.student_username)} · ${esc(a.class_name)} · ${a.score}/${a.total} (${pct(a).toFixed(1)}%)</p><div class="card">` +
+    qs.map((q, i) => { const r = an.find(x => x.question_id === q.id);
+      return `<div class="q"><b>${i + 1}. ${esc(q.qtext)}</b><br>Student: <span class="${r && r.correct ? "ok" : "bad"}">${show(q, r && r.response)} ${r && r.correct ? "✓" : "✗"}</span><br>Correct: ${show(q, q.answer.split("|")[0])}</div>`; }).join("") + `</div>`;
+}
+async function uploadView() {
+  app.innerHTML = `<h1>Upload results</h1><div class="card"><p>Choose the <b>rexxhub-results-….json</b> file made by <code>export_online.py</code> on the exam computer.</p><input type="file" id="file" accept=".json"><div id="pv"></div></div>`;
+  document.getElementById("file").onchange = async ev => {
+    const pv = document.getElementById("pv");
+    try {
+      const d = JSON.parse(await ev.target.files[0].text());
+      if (d.version !== 1 || !Array.isArray(d.exams)) throw new Error("This is not a Rexx Hub results file.");
+      const { data: s } = await sb.from("settings").select("value").eq("key", "install_id").maybeSingle();
+      const warn = s && s.value !== d.install_id ? `<div class="msg">This file comes from a different exam database than earlier uploads. If the exam app was reinstalled, uploading can overwrite old exams that share the same numbers. Continue only if you are sure.</div>` : "";
+      const na = d.exams.reduce((t, x) => t + x.attempts.length, 0);
+      pv.innerHTML = `${warn}<p><b>${d.exams.length}</b> exam(s), <b>${na}</b> submission(s):</p><ul>${d.exams.map(x => `<li>${esc(x.exam.title)} (teacher ${esc(x.exam.teacher_username)}, ${x.attempts.length} submissions)</li>`).join("")}</ul><button class="b" id="go">Upload now</button> <span id="pr"></span>`;
+      document.getElementById("go").onclick = async () => {
+        document.getElementById("go").disabled = true;
+        for (let i = 0; i < d.exams.length; i++) {
+          document.getElementById("pr").textContent = `Uploading ${i + 1} of ${d.exams.length}…`;
+          const { error } = await sb.rpc("import_exam", { p: d.exams[i] });
+          if (error) { document.getElementById("pr").innerHTML = `<span class="bad">Failed on "${esc(d.exams[i].exam.title)}": ${esc(error.message)}</span>`; return; }
+        }
+        await sb.from("settings").upsert({ key: "install_id", value: d.install_id });
+        document.getElementById("pr").innerHTML = `<span class="ok">Done. Teachers can see the results now.</span>`;
+      };
+    } catch (e) { pv.innerHTML = `<div class="msg">${esc(e.message)}</div>`; }
+  };
+}
+async function teachersView() {
+  const ps = await all("profiles", "*", q => q.order("created_at"));
+  app.innerHTML = `<h1>Teachers</h1><div class="card scroll"><p class="muted">The exam-app username must match the teacher's username in the offline app, because it decides which exams they see.</p><table><tr><th>Name</th><th>Exam-app username</th><th>Role</th><th>Status</th><th></th></tr>` +
+    ps.map(p => `<tr><td>${esc(p.full_name)}</td><td><input data-u="${p.id}" value="${esc(p.offline_username)}" style="margin:0;width:150px"></td><td>${p.role}</td><td class="${p.status === "approved" ? "ok" : "bad"}">${p.status}</td><td>${p.id === me.id ? "" : `<button class="b" data-s="approved" data-id="${p.id}">Approve</button> <button class="b g" data-s="disabled" data-id="${p.id}">Disable</button>`}</td></tr>`).join("") + `</table></div>`;
+  app.querySelectorAll("button[data-id]").forEach(b => b.onclick = async () => {
+    const u = app.querySelector(`input[data-u="${b.dataset.id}"]`).value.trim();
+    const { error } = await sb.from("profiles").update({ status: b.dataset.s, offline_username: u }).eq("id", b.dataset.id);
+    if (error) alert(error.message); else teachersView();
+  });
+}
+window.addEventListener("hashchange", route);
+sb.auth.onAuthStateChange(() => {});
+route();
+</script></body></html>
