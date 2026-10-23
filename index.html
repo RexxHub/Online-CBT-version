@@ -27,8 +27,8 @@ button.b:hover,a.b:hover{background:#c04a00}button.g{background:#fff;color:var(-
 <footer>Built by Solomon Chukwuemeka, C.E.O, Rexx Hub</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
-const SUPABASE_URL = https://brcaydunjflrdayjmabv.supabase.co
-const SUPABASE_KEY = sb_publishable_KCxBLObSfNJCPAdtRvPQoA_UiKYChp_
+const SUPABASE_URL = "https://brcaydunjflrdayjmabv.supabase.co";
+const SUPABASE_KEY = "sb_publishable_KCxBLObSfNJCPAdtRvPQoA_UiKYChp_";
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const app = document.getElementById("app");
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
