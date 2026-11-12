@@ -21,10 +21,34 @@ button.b:hover,a.b:hover{background:#c04a00}button.g{background:#fff;color:var(-
 .tabs{display:flex;gap:6px;margin-bottom:14px}.tabs a{padding:6px 14px;border-radius:6px;text-decoration:none;color:var(--ink);background:#e9ebf3}.tabs a.on{background:var(--ink);color:#fff}
 .ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}.muted{color:var(--muted)}.msg{padding:10px 12px;border-radius:6px;background:#fff1e6;margin:10px 0}
 .q{border-bottom:1px solid var(--line);padding:10px 0}.q:last-child{border:0}.w{max-width:380px;margin:40px auto}
+.pbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}.pbar .muted{font-size:13px;margin-right:4px}
+button.sm{padding:4px 10px;font-size:13px}
+#printArea{display:none}
+@media print{
+  header,main,footer,script{display:none!important}
+  body{background:#fff!important;color:#000!important;font-size:12px;display:block;min-height:0}
+  #printArea{display:block}
+  #printArea *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ph{display:flex;align-items:center;gap:12px;border-bottom:3px solid #14213d;padding-bottom:8px;margin-bottom:10px}
+  .ph img{height:46px}.pt{font-size:20px;font-weight:700;color:#14213d}.ps{font-size:12px;color:#444}
+  .pdt{font-size:17px;margin:6px 0 2px}.pm{font-size:12px;color:#333;margin-bottom:10px}
+  #printArea table{width:100%;border-collapse:collapse;margin:6px 0 10px}
+  #printArea th,#printArea td{border:1px solid #666;padding:4px 6px;font-size:11.5px;white-space:normal;text-align:left;vertical-align:top}
+  #printArea th{background:#e6e9f2!important;color:#000}
+  #printArea thead{display:table-header-group}#printArea tr{page-break-inside:avoid}
+  .pp{page-break-after:always}.pp:last-of-type{page-break-after:auto}
+  .pq{margin:0 0 10px;page-break-inside:avoid}.pq .o{margin-left:22px}
+  .line{border-bottom:1px solid #000;height:20px;margin-top:6px}
+  .psum{display:flex;flex-wrap:wrap;gap:6px 22px;margin:8px 0;font-size:12px}
+  .sig{display:flex;gap:40px;margin-top:38px}.sig div{flex:1;border-top:1px solid #000;padding-top:4px;font-size:11px;text-align:center}
+  .pok{font-weight:700}.pbad{font-weight:700;text-decoration:underline}
+  .pf{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:10px;color:#444;border-top:1px solid #999;padding-top:3px}
+}
 </style></head><body>
 <header><img src="logo.png" alt=""><b>REXVA CBT</b><span>Teachers dashboard</span><nav id="nav"></nav></header>
 <main id="app"></main>
 <footer><strong>REXVA V1.3.0</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exams Offline, Resullts Online &middot; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&copy; 2026 Rexx Hub </footer>
+<div id="printArea"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const SUPABASE_URL = "https://brcaydunjflrdayjmabv.supabase.co"
@@ -51,7 +75,7 @@ async function all(table, sel, f) {
 function nav() {
   const n = document.getElementById("nav");
   if (!me) { n.innerHTML = ""; return; }
-  n.innerHTML = `<a href="#/">Exams</a>` + (me.role === "admin" ? `<a href="#/upload">Upload results</a><a href="#/teachers">Teachers</a>` : "") +
+  n.innerHTML = `<a href="#/">Exams</a><a href="#/subjects">Subjects</a>` + (me.role === "admin" ? `<a href="#/upload">Upload results</a><a href="#/teachers">Teachers</a>` : "") +
     `<span class="muted">${esc(me.full_name)}</span><button id="out">Sign out</button>`;
   document.getElementById("out").onclick = async () => { await sb.auth.signOut(); me = null; route(); };
 }
@@ -88,6 +112,8 @@ async function route() {
   try {
     if (h === "/upload" && me.role === "admin") return await uploadView();
     if (h === "/teachers" && me.role === "admin") return await teachersView();
+    if (h === "/subjects") return await subjectsView();
+    if (p[1] === "subject") return await subjectView(decodeURIComponent(p[2] || ""));
     if (p[1] === "exam" && p[3] === "attempt") return await attemptView(+p[2], +p[4]);
     if (p[1] === "exam") return await examView(+p[2], p[3] || "results");
     return await examsView();
@@ -100,9 +126,10 @@ async function examsView() {
     const a = at.filter(x => x.exam_id === e.id), ps = a.map(pct);
     const avg = ps.length ? (ps.reduce((s, v) => s + v, 0) / ps.length).toFixed(1) + "%" : "–";
     const pass = ps.length ? Math.round(ps.filter(v => v >= e.pass_mark).length / ps.length * 100) + "%" : "–";
-    return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.subject)}</td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${a.length}</td><td>${avg}</td><td>${pass}</td></tr>`;
+    return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.subject)}</td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${a.length}</td><td>${avg}</td><td>${pass}</td><td><button class="b g sm" data-pr="${e.id}">Print results</button></td></tr>`;
   }).join("");
-  app.innerHTML = `<h1>Your exams</h1><div class="card scroll">${ex.length ? `<table><tr><th>Exam</th><th>Subject</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th></tr>${rows}</table>` : `<p>No exams yet. Results appear here after the school admin uploads them.</p>`}</div>`;
+  app.innerHTML = `<h1>Your exams</h1><div class="card scroll">${ex.length ? `<table><tr><th>Exam</th><th>Subject</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th><th></th></tr>${rows}</table>` : `<p>No exams yet. Results appear here after the school admin uploads them.</p>`}</div>`;
+  app.querySelectorAll("button[data-pr]").forEach(b => b.onclick = () => printResults(+b.dataset.pr));
 }
 async function examView(id, tab) {
   const { data: e } = await sb.from("exams").select("*").eq("id", id).single();
@@ -128,9 +155,15 @@ async function examView(id, tab) {
       }).join("") + `</table></div>`;
     }
   }
-  app.innerHTML = `<p><a href="#/">← All exams</a></p><h1>${esc(e.title)}</h1><p class="muted">${esc(e.subject)} ${esc(e.target_class)} · pass mark ${e.pass_mark}% · ${e.duration_min} min</p>
+  app.innerHTML = `<p><a href="#/">← All exams</a></p><h1>${esc(e.title)}</h1><p class="muted"><a href="#/subject/${encodeURIComponent(subjName(e.subject))}">${esc(e.subject)}</a> ${esc(e.target_class)} · pass mark ${e.pass_mark}% · ${e.duration_min} min</p>
   <div class="stats"><div><b>${n}</b><span>Students</span></div><div><b>${st[0]}</b><span>Average</span></div><div><b>${st[1]}</b><span>Highest</span></div><div><b>${st[2]}</b><span>Lowest</span></div><div><b>${st[3]}</b><span>Pass rate</span></div></div>
+  <div class="pbar"><span class="muted">Print:</span><button class="b g sm" id="pr1">Results sheet</button><button class="b g sm" id="pr2">Item analysis</button><button class="b g sm" id="pr3">Question paper</button><button class="b g sm" id="pr4">Marking scheme</button><button class="b g sm" id="pr5">All student reports</button></div>
   <div class="tabs">${["results", "analysis", "questions"].map(t => `<a href="#/exam/${id}/${t}" class="${t === tab ? "on" : ""}">${t[0].toUpperCase() + t.slice(1)}</a>`).join("")}</div>${body}`;
+  document.getElementById("pr1").onclick = () => printResults(id);
+  document.getElementById("pr2").onclick = () => printAnalysis(id);
+  document.getElementById("pr3").onclick = () => printPaper(id, false);
+  document.getElementById("pr4").onclick = () => printPaper(id, true);
+  document.getElementById("pr5").onclick = () => printReports(id);
   const b = document.getElementById("csv");
   if (b) b.onclick = () => {
     const rows = [["Student ID", "Name", "Class", "Score", "Total", "Percent", "Result", "Submitted", "Tab switches"]].concat(at.map(a => [a.student_username, a.student_name, a.class_name, a.score, a.total, pct(a).toFixed(1), pct(a) >= e.pass_mark ? "PASS" : "FAIL", fdt(a.submitted_at), a.tab_switches]));
@@ -143,10 +176,12 @@ async function attemptView(eid, aid) {
   const qs = await all("questions", "*", q => q.eq("exam_id", eid).order("pos"));
   const an = await all("answers", "*", q => q.eq("attempt_id", aid).order("question_id"));
   if (!a) throw new Error("Attempt not found.");
+  const { data: ex } = await sb.from("exams").select("*").eq("id", eid).single();
   const show = (q, v) => v == null || v === "" ? "No answer" : q.qtype === "mcq" ? `${esc(v)}. ${esc((q.options || [])["ABCDE".indexOf(String(v).toUpperCase())] ?? "")}` : esc(v);
-  app.innerHTML = `<p><a href="#/exam/${eid}">← Back to results</a></p><h1>${esc(a.student_name)}</h1><p class="muted">${esc(a.student_username)} · ${esc(a.class_name)} · ${a.score}/${a.total} (${pct(a).toFixed(1)}%)</p><div class="card">` +
+  app.innerHTML = `<p><a href="#/exam/${eid}">← Back to results</a></p><h1>${esc(a.student_name)}</h1><p class="muted">${esc(a.student_username)} · ${esc(a.class_name)} · ${a.score}/${a.total} (${pct(a).toFixed(1)}%)</p><div class="pbar"><button class="b sm" id="prs">Print this student's report</button></div><div class="card">` +
     qs.map((q, i) => { const r = an.find(x => x.question_id === q.id);
       return `<div class="q"><b>${i + 1}. ${esc(q.qtext)}</b><br>Student: <span class="${r && r.correct ? "ok" : "bad"}">${show(q, r && r.response)} ${r && r.correct ? "✓" : "✗"}</span><br>Correct: ${show(q, q.answer.split("|")[0])}</div>`; }).join("") + `</div>`;
+  document.getElementById("prs").onclick = async () => printDoc(await reportHTML(ex, a, qs, an));
 }
 async function uploadView() {
   app.innerHTML = `<h1>Upload results</h1><div class="card"><p>Choose the <b>rexxhub-results-….json</b> file made by <code>export_online.py</code> on the exam computer.</p><input type="file" id="file" accept=".json"><div id="pv"></div></div>`;
@@ -182,6 +217,162 @@ async function teachersView() {
     if (error) alert(error.message); else teachersView();
   });
 }
+/* ================= PRINTING (every teacher, every subject) ================= */
+const subjKey = s => (s || "").trim().toLowerCase();
+const subjName = s => (s || "").trim() || "No subject";
+const fd = t => t ? new Date(t).toLocaleDateString() : "";
+let tnames = null;
+async function teacherName(u) {
+  if (me.role === "teacher") return me.full_name || u;
+  if (!tnames) {
+    tnames = {};
+    try { (await all("profiles", "*")).forEach(p => tnames[(p.offline_username || "").toLowerCase()] = p.full_name); } catch (e) {}
+  }
+  return tnames[(u || "").toLowerCase()] || u;
+}
+function printDoc(html, landscape) {
+  const pa = document.getElementById("printArea");
+  let st = document.getElementById("pg");
+  if (!st) { st = document.createElement("style"); st.id = "pg"; document.head.appendChild(st); }
+  st.textContent = `@page{size:A4 ${landscape ? "landscape" : "portrait"};margin:14mm 12mm 16mm}`;
+  pa.innerHTML = html + `<div class="pf">REXVA V1.3.0 &middot; &copy; 2026 Rexx Hub &middot; Printed ${esc(new Date().toLocaleString())} by ${esc(me.full_name)}</div>`;
+  Promise.all([...pa.querySelectorAll("img")].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })))
+    .then(() => setTimeout(() => window.print(), 100));
+}
+window.addEventListener("afterprint", () => { document.getElementById("printArea").innerHTML = ""; });
+const pHead = (sub, title, lines) => `<div class="ph"><img src="logo.png" alt=""><div><div class="pt">REXVA CBT</div><div class="ps">${esc(sub)}</div></div></div><h2 class="pdt">${esc(title)}</h2><div class="pm">${lines.filter(Boolean).map(esc).join(" &nbsp;|&nbsp; ")}</div>`;
+const examMeta = (e, tn) => ["Subject: " + subjName(e.subject), e.target_class && "Class: " + e.target_class, "Teacher: " + tn, "Pass mark: " + e.pass_mark + "%", e.duration_min && "Duration: " + e.duration_min + " min", e.opens_at && "Date: " + fd(e.opens_at)];
+const sigBlock = `<div class="sig"><div>Subject teacher</div><div>Head of department</div><div>Principal / Date</div></div>`;
+const stats = (list, pm) => {
+  const ps = list.map(pct), n = ps.length;
+  return n ? { n, avg: ps.reduce((s, v) => s + v, 0) / n, hi: Math.max(...ps), lo: Math.min(...ps), pass: ps.filter(v => v >= pm).length / n * 100 } : { n: 0 };
+};
+const sumLine = s => s.n ? `<div class="psum"><span><b>Students:</b> ${s.n}</span><span><b>Average:</b> ${s.avg.toFixed(1)}%</span><span><b>Highest:</b> ${s.hi.toFixed(1)}%</span><span><b>Lowest:</b> ${s.lo.toFixed(1)}%</span><span><b>Pass rate:</b> ${Math.round(s.pass)}%</span></div>` : `<p>No submissions yet.</p>`;
+async function getExam(id) {
+  const { data: e } = await sb.from("exams").select("*").eq("id", id).single();
+  if (!e) throw new Error("Exam not found.");
+  return e;
+}
+const safe = fn => async (...a) => { try { await fn(...a); } catch (e) { alert("Could not prepare the printout: " + e.message); } };
+
+const printResults = safe(async id => {
+  const e = await getExam(id), tn = await teacherName(e.teacher_username);
+  const at = await all("attempts", "*", q => q.eq("exam_id", id).order("student_name"));
+  const rank = {}; [...at].sort((a, b) => pct(b) - pct(a)).forEach((a, i, arr) => rank[a.id] = i && pct(a) === pct(arr[i - 1]) ? rank[arr[i - 1].id] : i + 1);
+  const ord = n => n + (["th", "st", "nd", "rd"][(n % 100 - 20) % 10] || ["th", "st", "nd", "rd"][n % 100] || "th");
+  printDoc(pHead("Student Result Sheet", e.title, examMeta(e, tn)) + sumLine(stats(at, e.pass_mark)) +
+    `<table><thead><tr><th>S/N</th><th>Student name</th><th>ID</th><th>Class</th><th>Score</th><th>%</th><th>Position</th><th>Result</th></tr></thead><tbody>` +
+    at.map((a, i) => { const p = pct(a), ok = p >= e.pass_mark; return `<tr><td>${i + 1}</td><td>${esc(a.student_name)}</td><td>${esc(a.student_username)}</td><td>${esc(a.class_name)}</td><td>${a.score}/${a.total}</td><td>${p.toFixed(1)}</td><td>${ord(rank[a.id])}</td><td class="${ok ? "pok" : "pbad"}">${ok ? "PASS" : "FAIL"}</td></tr>`; }).join("") +
+    `</tbody></table>` + sigBlock);
+});
+
+const printAnalysis = safe(async id => {
+  const e = await getExam(id), tn = await teacherName(e.teacher_username);
+  const at = await all("attempts", "*", q => q.eq("exam_id", id)), n = at.length;
+  const qs = await all("questions", "*", q => q.eq("exam_id", id).order("pos"));
+  const an = await all("answers", "attempt_id,question_id,correct", q => q.eq("exam_id", id).order("attempt_id").order("question_id"));
+  printDoc(pHead("Item Analysis", e.title, examMeta(e, tn)) + sumLine(stats(at, e.pass_mark)) +
+    `<table><thead><tr><th>No.</th><th>Question</th><th>Correct answer</th><th>Got it right</th><th>Difficulty</th></tr></thead><tbody>` +
+    qs.map((q, i) => { const r = n ? Math.round(an.filter(x => x.question_id === q.id && x.correct).length / n * 100) : 0;
+      return `<tr><td>${i + 1}</td><td>${esc(q.qtext.slice(0, 140))}</td><td>${esc(q.answer.split("|")[0])}</td><td>${r}%</td><td>${r >= 70 ? "Easy" : r >= 40 ? "Moderate" : "Hard"}</td></tr>`; }).join("") +
+    `</tbody></table>` + sigBlock);
+});
+
+const printPaper = safe(async (id, withAnswers) => {
+  const e = await getExam(id), tn = await teacherName(e.teacher_username);
+  const qs = await all("questions", "*", q => q.eq("exam_id", id).order("pos"));
+  const total = qs.reduce((s, q) => s + Number(q.marks || 0), 0);
+  const blanks = withAnswers ? "" : `<div class="psum"><span>Name: ______________________________</span><span>Class: __________</span><span>Date: __________</span></div>`;
+  const body = qs.map((q, i) => {
+    let o = "";
+    if (q.qtype === "mcq") o = (q.options || []).map((t, k) => `<div class="o">${"ABCDE"[k]}. ${esc(t)}</div>`).join("");
+    else if (q.qtype === "tf") o = `<div class="o">True &nbsp;/&nbsp; False</div>`;
+    else if (!withAnswers) o = `<div class="line"></div><div class="line"></div>`;
+    const ans = withAnswers ? `<div class="o"><b>Answer: ${esc(q.answer.split("|").join("  /  "))}</b></div>` : "";
+    return `<div class="pq"><b>${i + 1}.</b> ${esc(q.qtext)} <i>(${q.marks} mark${q.marks == 1 ? "" : "s"})</i>${o}${ans}</div>`;
+  }).join("");
+  printDoc(pHead(withAnswers ? "Marking Scheme (teacher copy)" : "Question Paper", e.title, examMeta(e, tn).concat(["Total marks: " + total])) + blanks +
+    (withAnswers ? "" : `<p><i>Answer all questions.</i></p>`) + body);
+});
+
+async function reportHTML(e, a, qs, an) {
+  const tn = await teacherName(e.teacher_username), p = pct(a), ok = p >= e.pass_mark;
+  const show = (q, v) => v == null || v === "" ? "No answer" : q.qtype === "mcq" ? `${esc(v)}. ${esc((q.options || [])["ABCDE".indexOf(String(v).toUpperCase())] ?? "")}` : esc(v);
+  return `<div class="pp">` + pHead("Student Result Report", e.title, examMeta(e, tn)) +
+    `<div class="psum"><span><b>Student:</b> ${esc(a.student_name)}</span><span><b>ID:</b> ${esc(a.student_username)}</span><span><b>Class:</b> ${esc(a.class_name)}</span></div>` +
+    `<div class="psum"><span><b>Score:</b> ${a.score}/${a.total} (${p.toFixed(1)}%)</span><span><b>Result:</b> <span class="${ok ? "pok" : "pbad"}">${ok ? "PASS" : "FAIL"}</span></span><span><b>Submitted:</b> ${esc(fdt(a.submitted_at))}</span></div>` +
+    `<table><thead><tr><th>No.</th><th>Question</th><th>Student's answer</th><th>Correct answer</th><th></th></tr></thead><tbody>` +
+    qs.map((q, i) => { const r = an.find(x => x.question_id === q.id);
+      return `<tr><td>${i + 1}</td><td>${esc(q.qtext)}</td><td>${show(q, r && r.response)}</td><td>${show(q, q.answer.split("|")[0])}</td><td>${r && r.correct ? "&#10003;" : "&#10007;"}</td></tr>`; }).join("") +
+    `</tbody></table>` + sigBlock + `</div>`;
+}
+const printReports = safe(async id => {
+  const e = await getExam(id);
+  const at = await all("attempts", "*", q => q.eq("exam_id", id).order("student_name"));
+  if (!at.length) return alert("No submissions to print yet.");
+  const qs = await all("questions", "*", q => q.eq("exam_id", id).order("pos"));
+  const an = await all("answers", "*", q => q.eq("exam_id", id).order("attempt_id").order("question_id"));
+  let html = "";
+  for (const a of at) html += await reportHTML(e, a, qs, an.filter(x => x.attempt_id === a.id));
+  printDoc(html);
+});
+
+/* ---- subjects: group every exam by subject ---- */
+async function loadSubjects() {
+  const ex = await all("exams", "*", q => q.order("id", { ascending: false }));
+  const at = await all("attempts", "*", q => q.order("student_name"));
+  const g = {};
+  ex.forEach(e => { const k = subjKey(e.subject); (g[k] = g[k] || { name: subjName(e.subject), exams: [] }).exams.push(e); });
+  Object.values(g).forEach(s => { s.ids = s.exams.map(e => e.id); s.att = at.filter(a => s.ids.includes(a.exam_id)); });
+  return g;
+}
+const subjStats = s => {
+  const pm = {}; s.exams.forEach(e => pm[e.id] = e.pass_mark);
+  const ps = s.att.map(pct), n = ps.length;
+  return { n, avg: n ? ps.reduce((t, v) => t + v, 0) / n : null, pass: n ? s.att.filter(a => pct(a) >= pm[a.exam_id]).length / n * 100 : null };
+};
+async function subjectsView() {
+  const g = await loadSubjects(), list = Object.entries(g).sort((a, b) => a[1].name.localeCompare(b[1].name));
+  app.innerHTML = `<h1>Subjects</h1><div class="pbar"><button class="b" id="pall">Print all subjects summary</button></div><div class="card scroll">` + (list.length ? `<table><tr><th>Subject</th><th>Exams</th><th>Classes</th>${me.role === "admin" ? "<th>Teachers</th>" : ""}<th>Submissions</th><th>Average</th><th>Pass rate</th><th></th></tr>` +
+    list.map(([k, s]) => { const st = subjStats(s);
+      return `<tr><td><a href="#/subject/${encodeURIComponent(s.name)}">${esc(s.name)}</a></td><td>${s.exams.length}</td><td>${esc([...new Set(s.exams.map(e => e.target_class).filter(Boolean))].join(", "))}</td>${me.role === "admin" ? `<td>${esc([...new Set(s.exams.map(e => e.teacher_username))].join(", "))}</td>` : ""}<td>${st.n}</td><td>${st.n ? st.avg.toFixed(1) + "%" : "–"}</td><td>${st.n ? Math.round(st.pass) + "%" : "–"}</td><td><button class="b g sm" data-k="${esc(k)}">Print mark sheet</button></td></tr>`; }).join("") + `</table>` : `<p>No subjects yet. They appear after results are uploaded.</p>`) + `</div>`;
+  app.querySelectorAll("button[data-k]").forEach(b => b.onclick = () => printSubject(b.dataset.k));
+  document.getElementById("pall").onclick = () => printAllSubjects();
+}
+async function subjectView(name) {
+  const g = await loadSubjects(), s = g[subjKey(name === "No subject" ? "" : name)];
+  if (!s) throw new Error("Subject not found.");
+  const st = subjStats(s);
+  app.innerHTML = `<p><a href="#/subjects">← All subjects</a></p><h1>${esc(s.name)}</h1><p class="muted">${s.exams.length} exam(s) · ${st.n} submission(s)${st.n ? ` · average ${st.avg.toFixed(1)}% · pass rate ${Math.round(st.pass)}%` : ""}</p>
+  <div class="pbar"><button class="b" id="pms">Print subject mark sheet</button></div><div class="card scroll"><table><tr><th>Exam</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th><th></th></tr>` +
+    s.exams.map(e => { const a = s.att.filter(x => x.exam_id === e.id), q = stats(a, e.pass_mark);
+      return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${q.n}</td><td>${q.n ? q.avg.toFixed(1) + "%" : "–"}</td><td>${q.n ? Math.round(q.pass) + "%" : "–"}</td><td><button class="b g sm" data-pr="${e.id}">Print results</button> <button class="b g sm" data-pp="${e.id}">Question paper</button></td></tr>`; }).join("") + `</table></div>`;
+  document.getElementById("pms").onclick = () => printSubject(subjKey(s.name === "No subject" ? "" : s.name));
+  app.querySelectorAll("button[data-pr]").forEach(b => b.onclick = () => printResults(+b.dataset.pr));
+  app.querySelectorAll("button[data-pp]").forEach(b => b.onclick = () => printPaper(+b.dataset.pp, false));
+}
+const printSubject = safe(async k => {
+  const s = (await loadSubjects())[k];
+  if (!s) throw new Error("Subject not found.");
+  const exams = [...s.exams].sort((a, b) => a.id - b.id), rows = {};
+  s.att.forEach(a => { const key = (a.student_username || a.student_name) + "|" + (a.class_name || ""); (rows[key] = rows[key] || { a, sc: {} }).sc[a.exam_id] = pct(a); });
+  const list = Object.values(rows).sort((x, y) => (x.a.class_name || "").localeCompare(y.a.class_name || "") || (x.a.student_name || "").localeCompare(y.a.student_name || ""));
+  const teachers = [...new Set(await Promise.all([...new Set(exams.map(e => e.teacher_username))].map(teacherName)))].join(", ");
+  const st = subjStats(s);
+  printDoc(pHead("Subject Mark Sheet", s.name, ["Teacher: " + teachers, exams.length + " exam(s)", st.n ? "Average: " + st.avg.toFixed(1) + "%" : ""]) +
+    `<table><thead><tr><th>S/N</th><th>Student name</th><th>ID</th><th>Class</th>${exams.map(e => `<th>${esc(e.title)}<br>(%)</th>`).join("")}<th>Average %</th></tr></thead><tbody>` +
+    list.map((r, i) => { const v = Object.values(r.sc), av = v.length ? (v.reduce((t, x) => t + x, 0) / v.length).toFixed(1) : "–";
+      return `<tr><td>${i + 1}</td><td>${esc(r.a.student_name)}</td><td>${esc(r.a.student_username)}</td><td>${esc(r.a.class_name)}</td>${exams.map(e => `<td>${r.sc[e.id] == null ? "–" : r.sc[e.id].toFixed(1)}</td>`).join("")}<td><b>${av}</b></td></tr>`; }).join("") +
+    `</tbody></table>` + sigBlock, exams.length > 4);
+});
+const printAllSubjects = safe(async () => {
+  const g = await loadSubjects(), list = Object.values(g).sort((a, b) => a.name.localeCompare(b.name));
+  printDoc(pHead("All Subjects Summary", "Subjects overview", [me.role === "admin" ? "All teachers" : "Teacher: " + me.full_name]) +
+    `<table><thead><tr><th>Subject</th><th>Exams</th><th>Classes</th>${me.role === "admin" ? "<th>Teachers</th>" : ""}<th>Submissions</th><th>Average</th><th>Pass rate</th></tr></thead><tbody>` +
+    list.map(s => { const st = subjStats(s);
+      return `<tr><td>${esc(s.name)}</td><td>${s.exams.length}</td><td>${esc([...new Set(s.exams.map(e => e.target_class).filter(Boolean))].join(", "))}</td>${me.role === "admin" ? `<td>${esc([...new Set(s.exams.map(e => e.teacher_username))].join(", "))}</td>` : ""}<td>${st.n}</td><td>${st.n ? st.avg.toFixed(1) + "%" : "–"}</td><td>${st.n ? Math.round(st.pass) + "%" : "–"}</td></tr>`; }).join("") + `</tbody></table>` + sigBlock);
+});
+
 window.addEventListener("hashchange", route);
 sb.auth.onAuthStateChange(() => {});
 route();
