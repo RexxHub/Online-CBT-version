@@ -12,7 +12,6 @@
 <script>
 const SUPABASE_URL = "https://brcaydunjflrdayjmabv.supabase.co"
 const SUPABASE_KEY = "sb_publishable_KCxBLObSfNJCPAdtRvPQoA_UiKYChp_"
-const RECOVERY = /type=recovery/.test(location.hash);
 try { if (top !== self) top.location = self.location; } catch (e) { document.body.innerHTML = ""; }
 document.getElementById("yr").textContent = new Date().getFullYear();
 const store = { _s() { try { return localStorage.getItem("rx_keep") === "1" ? localStorage : sessionStorage; } catch (e) { return sessionStorage; } },
@@ -43,7 +42,7 @@ const REL = ["Mother", "Father", "Guardian", "Other"].map(r => `<option>${r}</op
 const normId = s => String(s || "").toLowerCase().replace(/[\s-]/g, "");
 const okPw = p => p.length >= 10 && /[a-z]/i.test(p) && /\d/.test(p);
 const pg = (t, p) => `<div class="pagehead"><div><h1>${t}</h1><p>${p}</p></div></div>`;
-let notice = "", last = Date.now(), recovery = RECOVERY;
+let notice = "", last = Date.now();
 const pwBox = (id, ac) => `<div class="pwwrap"><input id="${id}" type="password" autocomplete="${ac}" required><button type="button" class="eye" data-eye="${id}" aria-label="Show password">${EYE1}</button></div>`;
 function wireEyes() {
   app.querySelectorAll("[data-eye]").forEach(b => b.onclick = () => {
@@ -95,11 +94,27 @@ function loginView(msg, ok) {
   <p class="small muted" style="margin:18px 0 0;text-align:center"><a href="#" id="fg">Forgot password?</a><br>No account yet? <a href="#/register">Sign Up</a></p></div>`, "loginpage");
   say(m, ok);
   const em = document.getElementById("em");
-  document.getElementById("fg").onclick = async e => {
+  const fg = document.getElementById("fg");
+  fg.onclick = async e => {
     e.preventDefault();
-    if (!em.value) return say("Type your email first, then press Forgot password.");
-    await sb.auth.resetPasswordForEmail(em.value.trim(), { redirectTo: location.origin + location.pathname });
-    say("If that email has an account, a reset link is on its way.", true);
+    const email = em.value.trim();
+    if (!email) return say("Type your email first, then press Forgot password.");
+    if (!em.checkValidity()) return say("Enter a valid email address first.");
+    fg.textContent = "Sending reset link…";
+    fg.setAttribute("aria-disabled", "true");
+    try {
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: location.origin + location.pathname
+      });
+      if (error) throw error;
+      say("If that email has an account, a reset link is on its way.", true);
+    } catch (error) {
+      console.error("Password reset email failed:", error);
+      say("We couldn't send the reset link. Check your connection and try again.");
+    } finally {
+      fg.textContent = "Forgot password?";
+      fg.removeAttribute("aria-disabled");
+    }
   };
   document.getElementById("f").onsubmit = async e => {
     e.preventDefault();
@@ -157,14 +172,21 @@ async function route() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) me = null; else if (!me) await loadMe();
   nav();
+  const h = location.hash.slice(1) || "/";
+  if (h === "/password") {
+    if (!session) {
+      history.replaceState(null, "", location.pathname);
+      return loginView("That reset link is expired or invalid. Request a new one.");
+    }
+    document.body.classList.remove("authmode");
+    return passwordView();
+  }
   if (!me) return location.hash.slice(1) === "/register" ? registerView() : loginView();
   document.body.classList.remove("authmode");
-  if (recovery) { recovery = false; history.replaceState(null, "", location.pathname + "#/password"); }   // opened from a reset-password e-mail
   if (me.status !== "approved") { app.innerHTML = `<div class="card" style="max-width:480px;margin:40px auto"><h2>Waiting for approval</h2><p>Your account has not been approved yet. Ask the school admin to approve it, then refresh this page.</p></div>`; return; }
-  const h = location.hash.slice(1) || "/", p = h.split("/");
+  const p = h.split("/");
   app.innerHTML = `<p class="muted">Loading…</p>`;
   try {
-    if (h === "/password") return passwordView();
     if (me.role === "parent") return p[1] === "review" ? await reviewView(+p[2], decodeURIComponent(p[3] || "")) : await parentHome();
     if (h === "/parents" && me.role === "admin") return await parentsView();
     if (h === "/upload" && me.role === "admin") return await uploadView();
