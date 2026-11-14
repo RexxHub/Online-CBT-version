@@ -1,0 +1,37 @@
+/* Online edition extras. Everything else (dark theme, login, Poppins) is style.css copied unchanged from the offline app. */
+body.authmode .topbar, body.authmode .mainfoot { display: none; }
+body.authmode main { max-width: none; padding: 0; }
+.fs { border: 0; padding: 0; margin: 0; min-width: 0; } .fs[hidden] { display: none; }
+.scroll { overflow-x: auto; }
+.ok { color: var(--ok); font-weight: 600; } .bad { color: var(--bad); font-weight: 600; }
+.tabs { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.tabs a { padding: 7px 14px; border-radius: 9px; color: var(--ink-soft); background: var(--card); border: 1px solid var(--line); font-weight: 500; }
+.tabs a:hover { text-decoration: none; color: var(--ink); } .tabs a.on { background: var(--accent); border-color: var(--accent); color: #101010; }
+.pbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; } .pbar .muted { font-size: .85rem; margin-right: 4px; }
+.q { border-bottom: 1px solid var(--line); padding: 10px 0; } .q:last-child { border: 0; }
+.card > p:first-child { margin-top: 0; }
+#printArea { display: none; }
+/* printouts (unchanged from the previous online edition) */
+@media print{
+  header,main,footer,script{display:none!important}
+  body{background:#fff!important;color:#000!important;font-size:12px;display:block;min-height:0}
+  #printArea{display:block}
+  #printArea *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ph{display:flex;align-items:center;gap:12px;border-bottom:3px solid #14213d;padding-bottom:8px;margin-bottom:10px}
+  .ph img{height:46px}.pt{font-size:20px;font-weight:700;color:#14213d}.ps{font-size:12px;color:#444}
+  .pdt{font-size:17px;margin:6px 0 2px}.pm{font-size:12px;color:#333;margin-bottom:10px}
+  #printArea table{width:100%;border-collapse:collapse;margin:6px 0 10px}
+  #printArea th,#printArea td{border:1px solid #666;padding:4px 6px;font-size:11.5px;white-space:normal;text-align:left;vertical-align:top}
+  #printArea th{background:#e6e9f2!important;color:#000}
+  #printArea thead{display:table-header-group}#printArea tr{page-break-inside:avoid}
+  .pp{page-break-after:always}.pp:last-of-type{page-break-after:auto}
+  .pq{margin:0 0 10px;page-break-inside:avoid}.pq .o{margin-left:22px}
+  .line{border-bottom:1px solid #000;height:20px;margin-top:6px}
+  .psum{display:flex;flex-wrap:wrap;gap:6px 22px;margin:8px 0;font-size:12px}
+  .sig{display:flex;gap:40px;margin-top:38px}.sig div{flex:1;border-top:1px solid #000;padding-top:4px;font-size:11px;text-align:center}
+  .pok{font-weight:700}.pbad{font-weight:700;text-decoration:underline}
+  .pf{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:10px;color:#444;border-top:1px solid #999;padding-top:3px}
+  .modal,.sitefooter,.topbar{display:none!important}
+}
+.topbar .inner { gap: 14px; } .topbar nav a { padding: 8px 9px; white-space: nowrap; }
+.rev.ok, .rev.bad { color: var(--ink); font-weight: 400; }

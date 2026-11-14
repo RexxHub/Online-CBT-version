@@ -1,59 +1,22 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rexva Teachers dashboard</title><link rel="icon" href="favicon.png">
-<style>
-:root{--ink:#14213d;--soft:#4a5568;--muted:#7b8498;--bg:#f4f5f9;--card:#fff;--line:#e2e5ee;--accent:#e85d04;--teal:#0b7a75;--ok:#1b7f4b;--bad:#c0392b}
-*{box-sizing:border-box}body{margin:0;font:15px/1.5 "Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);min-height:100vh;display:flex;flex-direction:column}
-header{background:var(--ink);color:#fff;display:flex;align-items:center;gap:12px;padding:10px 20px;flex-wrap:wrap}
-header img{height:34px}header b{font-size:18px}header nav{margin-left:auto;display:flex;gap:16px;align-items:center}
-header a,header button{color:#fff;background:none;border:0;font:inherit;cursor:pointer;text-decoration:none;opacity:.85}header a:hover,header button:hover{opacity:1;text-decoration:underline}
-main{flex:1;width:100%;max-width:1000px;margin:0 auto;padding:20px}
-footer{text-align:center;color:var(--muted);font-size:13px;padding:16px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:18px;margin-bottom:16px}
-h1,h2{margin:0 0 12px}h1{font-size:22px}h2{font-size:18px}
-table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}th{color:var(--soft);font-weight:600;font-size:13px}
-.scroll{overflow-x:auto}a{color:var(--teal)}
-input,select{font:inherit;padding:8px 10px;border:1px solid var(--line);border-radius:6px;width:100%;margin:4px 0 12px}
-button.b,a.b{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:6px;padding:8px 16px;font:inherit;cursor:pointer;text-decoration:none}
-button.b:hover,a.b:hover{background:#c04a00}button.g{background:#fff;color:var(--ink);border:1px solid var(--line)}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--teal);outline-offset:2px}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:16px}.stats div{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:12px}
-.stats b{display:block;font-size:22px}.stats span{color:var(--muted);font-size:13px}
-.tabs{display:flex;gap:6px;margin-bottom:14px}.tabs a{padding:6px 14px;border-radius:6px;text-decoration:none;color:var(--ink);background:#e9ebf3}.tabs a.on{background:var(--ink);color:#fff}
-.ok{color:var(--ok);font-weight:600}.bad{color:var(--bad);font-weight:600}.muted{color:var(--muted)}.msg{padding:10px 12px;border-radius:6px;background:#fff1e6;margin:10px 0}
-.q{border-bottom:1px solid var(--line);padding:10px 0}.q:last-child{border:0}.w{max-width:380px;margin:40px auto}
-.pbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:0 0 14px}.pbar .muted{font-size:13px;margin-right:4px}
-button.sm{padding:4px 10px;font-size:13px}
-#printArea{display:none}
-@media print{
-  header,main,footer,script{display:none!important}
-  body{background:#fff!important;color:#000!important;font-size:12px;display:block;min-height:0}
-  #printArea{display:block}
-  #printArea *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .ph{display:flex;align-items:center;gap:12px;border-bottom:3px solid #14213d;padding-bottom:8px;margin-bottom:10px}
-  .ph img{height:46px}.pt{font-size:20px;font-weight:700;color:#14213d}.ps{font-size:12px;color:#444}
-  .pdt{font-size:17px;margin:6px 0 2px}.pm{font-size:12px;color:#333;margin-bottom:10px}
-  #printArea table{width:100%;border-collapse:collapse;margin:6px 0 10px}
-  #printArea th,#printArea td{border:1px solid #666;padding:4px 6px;font-size:11.5px;white-space:normal;text-align:left;vertical-align:top}
-  #printArea th{background:#e6e9f2!important;color:#000}
-  #printArea thead{display:table-header-group}#printArea tr{page-break-inside:avoid}
-  .pp{page-break-after:always}.pp:last-of-type{page-break-after:auto}
-  .pq{margin:0 0 10px;page-break-inside:avoid}.pq .o{margin-left:22px}
-  .line{border-bottom:1px solid #000;height:20px;margin-top:6px}
-  .psum{display:flex;flex-wrap:wrap;gap:6px 22px;margin:8px 0;font-size:12px}
-  .sig{display:flex;gap:40px;margin-top:38px}.sig div{flex:1;border-top:1px solid #000;padding-top:4px;font-size:11px;text-align:center}
-  .pok{font-weight:700}.pbad{font-weight:700;text-decoration:underline}
-  .pf{position:fixed;bottom:0;left:0;right:0;text-align:center;font-size:10px;color:#444;border-top:1px solid #999;padding-top:3px}
-}
-</style></head><body>
-<header><img src="logo.png" alt=""><b>REXVA CBT</b><span>Teachers dashboard</span><nav id="nav"></nav></header>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'"><meta name="referrer" content="no-referrer">
+<title>REXVA CBT · Online</title><link rel="icon" type="image/png" href="brand/favicon.png">
+<link rel="stylesheet" href="style.css"><link rel="stylesheet" href="online.css">
+</head><body>
+<header class="topbar no-print"><div class="inner"><a class="brand" href="#/"><img class="logo" src="brand/logo.png" alt="" width="36" height="36"><em>REXVA CBT</em></a><nav id="nav"></nav><div class="who" id="who"></div></div></header>
 <main id="app"></main>
-<footer><strong>REXVA V1.3.0</strong> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Exams Offline, Resullts Online &middot; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&copy; 2026 Rexx Hub </footer>
+<footer class="sitefooter mainfoot no-print"><div class="inner"><span class="fbrand"><img class="logo" src="brand/logo.png" alt="" width="22" height="22">Rexx<em>Hub</em></span><span class="fmeta">Exams Offline, Results Online &middot; &copy; <span id="yr"></span> Rexx Hub &middot; V1.3.0</span></div></footer>
 <div id="printArea"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
 const SUPABASE_URL = "https://brcaydunjflrdayjmabv.supabase.co"
 const SUPABASE_KEY = "sb_publishable_KCxBLObSfNJCPAdtRvPQoA_UiKYChp_"
-const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+try { if (top !== self) top.location = self.location; } catch (e) { document.body.innerHTML = ""; }
+document.getElementById("yr").textContent = new Date().getFullYear();
+const store = { _s() { try { return localStorage.getItem("rx_keep") === "1" ? localStorage : sessionStorage; } catch (e) { return sessionStorage; } },
+  getItem(k) { return this._s().getItem(k); }, setItem(k, v) { this._s().setItem(k, v); }, removeItem(k) { try { localStorage.removeItem(k); } catch (e) {} sessionStorage.removeItem(k); } };
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { storage: store, persistSession: true, autoRefreshToken: true } });
 const app = document.getElementById("app");
 const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fdt = t => t ? new Date(t).toLocaleString() : "";
@@ -72,44 +35,136 @@ async function all(table, sel, f) {
     from += 1000;
   }
 }
-function nav() {
-  const n = document.getElementById("nav");
-  if (!me) { n.innerHTML = ""; return; }
-  n.innerHTML = `<a href="#/">Exams</a><a href="#/subjects">Subjects</a>` + (me.role === "admin" ? `<a href="#/upload">Upload results</a><a href="#/teachers">Teachers</a>` : "") +
-    `<span class="muted">${esc(me.full_name)}</span><button id="out">Sign out</button>`;
-  document.getElementById("out").onclick = async () => { await sb.auth.signOut(); me = null; route(); };
+const EYE1 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
+const EYE0 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.8 19.8 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 7 11 7a19.9 19.9 0 0 1-3.17 4.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
+const FOOT = `<footer class="sitefooter"><div class="inner"><span class="fbrand"><img class="logo" src="brand/logo.png" alt="" width="22" height="22">Rexx<em>Hub</em></span><span class="fmeta">Exams Offline, Results Online &middot; &copy; ${new Date().getFullYear()} Rexx Hub &middot; V1.3.0</span></div></footer>`;
+const REL = ["Mother", "Father", "Guardian", "Other"].map(r => `<option>${r}</option>`).join("");
+const normId = s => String(s || "").toLowerCase().replace(/[\s-]/g, "");
+const okPw = p => p.length >= 10 && /[a-z]/i.test(p) && /\d/.test(p);
+const pg = (t, p) => `<div class="pagehead"><div><h1>${t}</h1><p>${p}</p></div></div>`;
+let notice = "", last = Date.now();
+const pwBox = (id, ac) => `<div class="pwwrap"><input id="${id}" type="password" autocomplete="${ac}" required><button type="button" class="eye" data-eye="${id}" aria-label="Show password">${EYE1}</button></div>`;
+function wireEyes() {
+  app.querySelectorAll("[data-eye]").forEach(b => b.onclick = () => {
+    const i = document.getElementById(b.dataset.eye), s = i.type === "password";
+    i.type = s ? "text" : "password"; b.innerHTML = s ? EYE0 : EYE1; b.setAttribute("aria-label", s ? "Hide password" : "Show password"); i.focus();
+  });
 }
-function loginView(signup, msg) {
-  app.innerHTML = `<div class="card w"><h2>${signup ? "Create teacher account" : "Teacher sign in"}</h2>
-  <form id="f">${signup ? `<label>Full name<input id="fn" required></label>
-  <label>Your username in the exam app<input id="un" required></label>` : ""}
-  <label>Email<input id="em" type="email" required></label>
-  <label>Password<input id="pw" type="password" minlength="8" required></label>
-  <button class="b">${signup ? "Create account" : "Sign in"}</button></form>
-  <p>${msg ? `<span class="msg">${esc(msg)}</span><br>` : ""}<a href="#" id="sw">${signup ? "I already have an account" : "Create a teacher account"}</a></p></div>`;
-  document.getElementById("sw").onclick = e => { e.preventDefault(); loginView(!signup); };
+function say(m, ok) { const f = document.getElementById("fm"); f.className = m ? "flash " + (ok ? "success" : "error") : ""; f.textContent = m || ""; }
+function authPage(inner, cls) {
+  document.body.classList.add("authmode");
+  app.innerHTML = `<div class="authwrap ${cls}">${inner}<div class="authfoot">${FOOT}</div></div>`;
+  wireEyes();
+}
+/* sign-in lockout on this device (the real rate limit is Supabase Auth's own) */
+const lockLeft = () => { try { const f = JSON.parse(localStorage.getItem("rx_fail") || "{}"); return f.until > Date.now() ? Math.ceil((f.until - Date.now()) / 60000) : 0; } catch (e) { return 0; } };
+const noteFail = clear => { try { let f = JSON.parse(localStorage.getItem("rx_fail") || "{}"); if (clear || (f.until && f.until < Date.now())) f = {}; if (!clear) { f.n = (f.n || 0) + 1; if (f.n >= 5) { f.until = Date.now() + 300000; f.n = 0; } } localStorage.setItem("rx_fail", JSON.stringify(f)); } catch (e) {} };
+
+async function loadMe() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return (me = null);
+  const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).single();
+  return (me = data);
+}
+async function signOut(msg) {
+  await sb.auth.signOut(); me = null; tnames = null; notice = msg || "";
+  try { localStorage.removeItem("rx_keep"); } catch (e) {}
+  document.getElementById("printArea").innerHTML = "";
+  history.replaceState(null, "", location.pathname); route();
+}
+function nav() {
+  const n = document.getElementById("nav"), w = document.getElementById("who");
+  if (!me) { n.innerHTML = w.innerHTML = ""; return; }
+  const h = location.hash.slice(1) || "/", a = (href, txt, on) => `<a href="#${href}" class="${on ? "on" : ""}">${txt}</a>`;
+  n.innerHTML = me.role === "parent" ? a("/", "My children", h === "/") :
+    a("/", "Exams", h === "/" || h.startsWith("/exam")) + a("/subjects", "Subjects", h.startsWith("/subject")) +
+    (me.role === "admin" ? a("/parents", "Parents", h === "/parents") + a("/upload", "Upload results", h === "/upload") + a("/teachers", "Teachers", h === "/teachers") : "");
+  w.innerHTML = `<span>${esc(me.full_name)}</span><span class="role">${esc(me.role)}</span><a href="#/password" class="linkbtn">Password</a><button class="linkbtn" id="out">Sign Out</button>`;
+  document.getElementById("out").onclick = () => signOut();
+}
+function loginView(msg, ok) {
+  const m = msg || notice; notice = "";
+  authPage(`<div class="loginhead"><img class="loginlogo" src="brand/logo.png" alt="" width="108" height="108"><h1 class="loginname">REXVA CBT</h1><p class="tag">Exams Offline, Results Online</p></div>
+  <div class="authcard"><div id="fm" role="alert"></div>
+  <form id="f"><div class="field"><select class="rolesel" id="role" aria-label="Who is signing in"><option value="teacher">I am a teacher</option><option value="parent">I am a parent</option><option value="admin">I am an admin</option></select></div>
+  <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="username" autofocus required placeholder="you@example.com"></div>
+  <div class="field"><label for="pw">Password</label>${pwBox("pw", "current-password")}</div>
+  <label class="check"><input type="checkbox" id="keep"> Keep me signed in on this device</label>
+  <button class="btn primary block" type="submit">Sign In</button></form>
+  <p class="small muted" style="margin:18px 0 0;text-align:center"><a href="#" id="fg">Forgot password?</a><br>No account yet? <a href="#/register">Sign Up</a></p></div>`, "loginpage");
+  say(m, ok);
+  const em = document.getElementById("em");
+  document.getElementById("fg").onclick = async e => {
+    e.preventDefault();
+    if (!em.value) return say("Type your email first, then press Forgot password.");
+    await sb.auth.resetPasswordForEmail(em.value.trim(), { redirectTo: location.origin + location.pathname });
+    say("If that email has an account, a reset link is on its way.", true);
+  };
   document.getElementById("f").onsubmit = async e => {
     e.preventDefault();
-    const em = document.getElementById("em").value, pw = document.getElementById("pw").value;
-    if (signup) {
-      const { error } = await sb.auth.signUp({ email: em, password: pw, options: { data: { full_name: document.getElementById("fn").value, offline_username: document.getElementById("un").value } } });
-      if (error) return loginView(true, error.message);
-      return loginView(false, "Account created. Check your email if asked to confirm, then sign in. The admin must approve you before you see results.");
-    }
-    const { error } = await sb.auth.signInWithPassword({ email: em, password: pw });
-    if (error) return loginView(false, error.message);
-    route();
+    const w = lockLeft(); if (w) return say(`Too many failed attempts. Try again in ${w} minute(s).`);
+    try { localStorage.setItem("rx_keep", document.getElementById("keep").checked ? "1" : "0"); } catch (x) {}
+    const { error } = await sb.auth.signInWithPassword({ email: em.value.trim(), password: document.getElementById("pw").value });
+    if (error) { noteFail(); return say(/confirm/i.test(error.message) ? error.message : "Wrong email or password."); }
+    noteFail(true); me = null; await loadMe();
+    const pick = document.getElementById("role").value;
+    if (me && me.role !== pick) { const an = me.role === "admin" ? "an" : "a"; return signOut(`This is ${an} ${me.role} account. Choose "I am ${an} ${me.role}" and sign in again.`); }
+    last = Date.now(); route();
+  };
+}
+function registerView() {
+  authPage(`<div class="authcard wide"><div class="brand"><img class="logo" src="brand/logo.png" alt="" width="36" height="36"><em>REXVA CBT</em></div>
+  <p class="tag">Create a teacher or parent account. Teachers are approved by the school admin. A parent sees results only after the school confirms the child link.</p>
+  <div id="fm" role="alert"></div>
+  <form id="f"><div class="field"><select class="rolesel" id="kind"><option value="parent">I am a parent</option><option value="teacher">I am a teacher</option></select></div>
+  <div class="cols2"><div class="field"><label>Full name</label><input type="text" id="fn" required maxlength="80"></div><div class="field"><label>Email</label><input type="email" id="em" required autocomplete="username"></div></div>
+  <fieldset id="gp" class="fs"><div class="cols2"><div class="field"><label>Child's Student ID</label><input type="text" id="cid" required maxlength="40" autocomplete="off" placeholder="e.g. ADAOKA-7K3QD"></div><div class="field"><label>Child's full name</label><input type="text" id="cnm" required maxlength="80"></div></div>
+  <div class="field"><label>You are the child's</label><select id="crel">${REL}</select></div></fieldset>
+  <fieldset id="gt" class="fs" hidden disabled><div class="field"><label>Your username in the exam app</label><input type="text" id="un" required maxlength="60"></div></fieldset>
+  <div class="cols2"><div class="field"><label>Password</label>${pwBox("pw", "new-password")}<div class="hint">At least 10 characters, letters and numbers.</div></div><div class="field"><label>Confirm password</label>${pwBox("pw2", "new-password")}</div></div>
+  <button class="btn primary block" type="submit">Sign Up</button></form>
+  <p class="small muted" style="margin:18px 0 0;text-align:center"><a href="#/">Back to Sign In Page</a></p></div>`, "");
+  const $ = id => document.getElementById(id), kind = $("kind");
+  kind.onchange = () => { const t = kind.value === "teacher"; $("gt").hidden = $("gt").disabled = !t; $("gp").hidden = $("gp").disabled = t; };
+  $("f").onsubmit = async e => {
+    e.preventDefault();
+    if (!okPw($("pw").value)) return say("Password must be at least 10 characters with letters and numbers.");
+    if ($("pw").value !== $("pw2").value) return say("The two passwords do not match.");
+    const t = kind.value === "teacher", data = t ? { full_name: $("fn").value.trim(), offline_username: $("un").value.trim() } :
+      { account_type: "parent", full_name: $("fn").value.trim(), child_id: $("cid").value.trim(), child_name: $("cnm").value.trim(), relation: $("crel").value };
+    const { error } = await sb.auth.signUp({ email: $("em").value.trim(), password: $("pw").value, options: { data, emailRedirectTo: location.origin + location.pathname } });
+    if (error) return say(error.message);
+    await sb.auth.signOut(); history.replaceState(null, "", location.pathname);
+    loginView(t ? "Account created. Confirm your email if asked, then sign in. The admin must approve you before you see results." : "Account created. Confirm your email if asked, then sign in. Results appear once the school confirms your child's link.", true);
+  };
+}
+function passwordView() {
+  app.innerHTML = `<div class="card" style="max-width:480px;margin:0 auto"><h1>Change password</h1><div id="fm" role="alert"></div><form id="f">
+  <div class="field"><label>New password</label>${pwBox("n1", "new-password")}<div class="hint">At least 10 characters, letters and numbers.</div></div>
+  <div class="field"><label>Repeat new password</label>${pwBox("n2", "new-password")}</div><button class="btn primary" type="submit">Save password</button></form></div>`;
+  wireEyes();
+  document.getElementById("f").onsubmit = async e => {
+    e.preventDefault();
+    const a = document.getElementById("n1").value;
+    if (!okPw(a)) return say("Password must be at least 10 characters with letters and numbers.");
+    if (a !== document.getElementById("n2").value) return say("The two passwords do not match.");
+    const { error } = await sb.auth.updateUser({ password: a });
+    say(error ? error.message : "Password changed.", !error);
   };
 }
 async function route() {
   const { data: { session } } = await sb.auth.getSession();
-  if (!session) { me = null; nav(); return loginView(false); }
-  if (!me) { const { data } = await sb.from("profiles").select("*").eq("id", session.user.id).single(); me = data; }
+  if (!session) me = null; else if (!me) await loadMe();
   nav();
-  if (!me || me.status !== "approved") { app.innerHTML = `<div class="card w"><h2>Waiting for approval</h2><p>Your account has not been approved yet. Ask the school admin to approve it, then refresh this page.</p></div>`; return; }
+  if (!me) return location.hash.slice(1) === "/register" ? registerView() : loginView();
+  document.body.classList.remove("authmode");
+  if (me.status !== "approved") { app.innerHTML = `<div class="card" style="max-width:480px;margin:40px auto"><h2>Waiting for approval</h2><p>Your account has not been approved yet. Ask the school admin to approve it, then refresh this page.</p></div>`; return; }
   const h = location.hash.slice(1) || "/", p = h.split("/");
   app.innerHTML = `<p class="muted">Loading…</p>`;
   try {
+    if (h === "/password") return passwordView();
+    if (me.role === "parent") return p[1] === "review" ? await reviewView(+p[2], decodeURIComponent(p[3] || "")) : await parentHome();
+    if (h === "/parents" && me.role === "admin") return await parentsView();
     if (h === "/upload" && me.role === "admin") return await uploadView();
     if (h === "/teachers" && me.role === "admin") return await teachersView();
     if (h === "/subjects") return await subjectsView();
@@ -119,6 +174,81 @@ async function route() {
     return await examsView();
   } catch (e) { app.innerHTML = `<div class="card"><b>Something went wrong.</b> ${esc(e.message)}</div>`; }
 }
+
+/* ================= PARENT PORTAL (read-only) ================= */
+async function parentHome(msg) {
+  const { data: ls, error: e1 } = await sb.from("parent_links").select("*").order("created_at");
+  const { data: rs0, error: e2 } = await sb.rpc("parent_results");
+  if (e1 || e2) throw e1 || e2;
+  const res = rs0 || [], kids = ls.filter(l => l.status === "approved"), wait = ls.filter(l => l.status !== "approved");
+  const kid = l => {
+    const rs = res.filter(r => r.student_key === l.student_key), nm = rs[0] ? rs[0].student_name : l.child_name;
+    const avg = rs.length ? (rs.reduce((s, r) => s + pct(r), 0) / rs.length).toFixed(1) + "%" : "–";
+    return `<div class="card"><div class="row between"><div><h2 style="margin:0">${esc(nm)}</h2><span class="muted small">${esc(rs[0] ? rs[0].class_name : "")} · ID ${esc(l.student_id_typed)}</span></div><button class="btn primary" data-pk="${esc(l.student_key)}">Print report card</button></div>
+    <div class="stats" style="margin-top:16px"><div class="stat"><b>${rs.length}</b><span>Exams taken</span></div><div class="stat"><b>${avg}</b><span>Average</span></div><div class="stat"><b>${rs.filter(r => pct(r) >= r.pass_mark).length}/${rs.length}</b><span>Passed</span></div></div>` +
+      (rs.length ? `<div class="tablewrap"><table><tr><th>Subject</th><th>Exam</th><th>Date</th><th>Score</th><th>%</th><th>Class average</th><th>Position</th><th>Result</th><th></th></tr>${rs.map(r => { const p = pct(r), ok = p >= r.pass_mark;
+        return `<tr><td>${esc(subjName(r.subject))}</td><td>${esc(r.title)}</td><td>${esc(fd(r.exam_date))}</td><td>${r.score}/${r.total}</td><td>${p.toFixed(1)}</td><td>${r.class_avg == null ? "–" : r.class_avg + "%"}</td><td>${r.pos_in_class} of ${r.class_n}</td><td><span class="badge ${ok ? "ok" : "bad"}">${ok ? "Pass" : "Fail"}</span></td><td class="actions"><a class="btn sm" href="#/review/${r.exam_id}/${encodeURIComponent(l.student_key)}">Questions</a></td></tr>`; }).join("")}</table></div>` : `<p class="muted">No results have been uploaded for ${esc(nm)} yet.</p>`) + `</div>`;
+  };
+  app.innerHTML = pg(`Hello, ${esc((me.full_name || "").split(" ")[0])}`, "Your children's exam results. This page is read-only.") + (msg ? `<div class="flash success">${esc(msg)}</div>` : "") +
+    (kids.length ? kids.map(kid).join("") : `<div class="card"><p class="muted">No child is linked to your account yet. Send a request below; results appear after the school confirms it.</p></div>`) +
+    (wait.length ? `<div class="card"><h2>Link requests</h2><div class="tablewrap"><table><tr><th>Child</th><th>Student ID</th><th>Status</th><th></th></tr>${wait.map(l => `<tr><td>${esc(l.child_name)}</td><td>${esc(l.student_id_typed)}</td><td><span class="badge ${l.status === "pending" ? "warn" : "bad"}">${l.status === "pending" ? "Waiting for the school" : "Not approved"}</span></td><td class="actions">${l.status === "pending" ? `<button class="btn sm" data-cancel="${l.id}">Cancel</button>` : ""}</td></tr>`).join("")}</table></div></div>` : "") +
+    `<div class="card"><h2>Link another child</h2><p class="muted small">Enter the Student ID printed on your child's ID card. The school checks every request before any result is shown.</p><div id="fm" role="alert"></div><form id="lf"><div class="cols2"><div class="field"><label>Child's Student ID</label><input type="text" id="cid" required maxlength="40" autocomplete="off"></div><div class="field"><label>Child's full name</label><input type="text" id="cnm" required maxlength="80"></div></div><div class="field"><label>You are the child's</label><select id="crel">${REL}</select></div><button class="btn primary">Send request</button></form></div>`;
+  app.querySelectorAll("button[data-pk]").forEach(b => b.onclick = () => safe(printChild)(b.dataset.pk));
+  app.querySelectorAll("button[data-cancel]").forEach(b => b.onclick = async () => { await sb.from("parent_links").delete().eq("id", +b.dataset.cancel); parentHome(); });
+  document.getElementById("lf").onsubmit = async e => {
+    e.preventDefault();
+    const { error } = await sb.rpc("request_child_link", { sid: document.getElementById("cid").value, cname: document.getElementById("cnm").value, rel: document.getElementById("crel").value });
+    if (error) say(error.message); else parentHome("Request sent. Results appear once the school confirms it.");
+  };
+}
+async function printChild(key) {
+  const { data: rs0, error } = await sb.rpc("parent_results"); if (error) throw error;
+  const { data: l } = await sb.from("parent_links").select("*").eq("student_key", key).eq("status", "approved").single();
+  const rs = (rs0 || []).filter(r => r.student_key === key), nm = rs[0] ? rs[0].student_name : l.child_name;
+  const avg = rs.length ? (rs.reduce((s, r) => s + pct(r), 0) / rs.length).toFixed(1) : "–";
+  printDoc(pHead("Student Report Card", nm, ["Class: " + (rs[0] ? rs[0].class_name : ""), "ID: " + l.student_id_typed, "Parent/guardian: " + me.full_name]) +
+    `<div class="psum"><span><b>Exams taken:</b> ${rs.length}</span><span><b>Average:</b> ${avg}%</span><span><b>Passed:</b> ${rs.filter(r => pct(r) >= r.pass_mark).length}</span></div>` +
+    `<table><thead><tr><th>Subject</th><th>Exam</th><th>Date</th><th>Score</th><th>%</th><th>Class average</th><th>Position</th><th>Result</th></tr></thead><tbody>` +
+    rs.map(r => { const p = pct(r), ok = p >= r.pass_mark; return `<tr><td>${esc(subjName(r.subject))}</td><td>${esc(r.title)}</td><td>${esc(fd(r.exam_date))}</td><td>${r.score}/${r.total}</td><td>${p.toFixed(1)}</td><td>${r.class_avg == null ? "–" : r.class_avg + "%"}</td><td>${r.pos_in_class} of ${r.class_n}</td><td class="${ok ? "pok" : "pbad"}">${ok ? "PASS" : "FAIL"}</td></tr>`; }).join("") +
+    `</tbody></table><p><i>Read-only copy from the REXVA CBT parent portal. The school's own records are final.</i></p>`);
+}
+async function parentsView() {
+  const [ls, ps, at] = await Promise.all([all("parent_links", "*", q => q.order("created_at", { ascending: false })), all("profiles", "id,full_name,email", q => q.eq("role", "parent")), all("attempts", "student_username,student_name,class_name")]);
+  ls.sort((a, b) => (a.status === "pending" ? 0 : 1) - (b.status === "pending" ? 0 : 1));
+  const pm = Object.fromEntries(ps.map(p => [p.id, p])), sch = {}, tok = s => String(s || "").toLowerCase().split(/\s+/).filter(Boolean);
+  at.forEach(a => sch[normId(a.student_username)] = a);
+  const rows = ls.map(l => { const p = pm[l.parent_id] || {}, s = sch[l.student_key], diff = s && !tok(l.child_name).some(t => tok(s.student_name).includes(t));
+    return `<tr><td>${esc(p.full_name)}<div class="muted small">${esc(p.email || "")}</div></td><td>${esc(l.relation)}</td><td><b>${esc(l.student_id_typed)}</b></td><td>${esc(l.child_name)}</td><td>${s ? `${esc(s.student_name)} <span class="muted small">${esc(s.class_name || "")}</span>${diff ? ` <span class="badge warn">Name differs</span>` : ""}` : `<span class="muted">No results for this ID yet</span>`}</td><td><span class="badge ${l.status === "approved" ? "ok" : l.status === "pending" ? "warn" : "bad"}">${l.status}</span></td><td class="actions">${l.status !== "approved" ? `<button class="btn sm primary" data-a="approved" data-id="${l.id}">Approve</button> ` : ""}${l.status === "pending" ? `<button class="btn sm" data-a="rejected" data-id="${l.id}">Reject</button> ` : ""}<button class="btn sm danger" data-a="remove" data-id="${l.id}">Remove</button></td></tr>`; }).join("");
+  app.innerHTML = pg("Parents", "A parent sees a child's results only after you approve the link. Check that the name matches the school record.") +
+    `<div class="card"><div class="tablewrap">${ls.length ? `<table><tr><th>Parent</th><th>Relationship</th><th>ID typed</th><th>Name typed</th><th>School record</th><th>Status</th><th></th></tr>${rows}</table>` : `<p class="muted">No parent requests yet.</p>`}</div></div>`;
+  app.querySelectorAll("button[data-id]").forEach(b => b.onclick = async () => {
+    const id = +b.dataset.id, rm = b.dataset.a === "remove";
+    if (rm && !confirm("Remove this link? The parent loses access immediately.")) return;
+    const { error } = rm ? await sb.from("parent_links").delete().eq("id", id) : await sb.from("parent_links").update({ status: b.dataset.a, decided_at: new Date().toISOString() }).eq("id", id);
+    if (error) alert(error.message); else parentsView();
+  });
+}
+
+async function reviewView(eid, key) {
+  const [{ data: qs, error }, { data: rs }] = await Promise.all([sb.rpc("parent_exam_review", { eid, skey: key }), sb.rpc("parent_results")]);
+  if (error) throw error;
+  const r = (rs || []).find(x => x.exam_id === eid && x.student_key === key);
+  if (!r || !(qs || []).length) throw new Error("Questions not available.");
+  const show = (q, v) => v == null || v === "" ? "No answer" : q.qtype === "mcq" ? `${v}. ${(q.options || [])["ABCDE".indexOf(String(v).toUpperCase())] ?? ""}` : String(v);
+  const tot = qs.reduce((s, q) => s + Number(q.marks || 0), 0), title = `${r.title} - ${r.student_name}`;
+  app.innerHTML = `<div class="pagehead"><div><div class="crumbs"><a href="#/">My children</a> / ${esc(r.student_name)} / ${esc(r.title)}</div><h1>${esc(r.title)}</h1><p>${esc(r.student_name)} · ${esc(subjName(r.subject))} · ${r.score}/${r.total} (${pct(r).toFixed(1)}%) · read-only</p></div>
+  <div class="row no-print"><button class="btn" id="dl">Download CSV</button><button class="btn primary" id="pq">Print / save as PDF</button></div></div>` +
+    qs.map((q, i) => `<div class="rev ${q.correct ? "ok" : "bad"}"><div class="row between"><div><span class="qnum">${i + 1}.</span><b>${esc(q.qtext)}</b></div><span class="badge ${q.correct ? "ok" : "bad"}">${q.correct ? "Correct" : "Wrong"} · ${q.correct ? q.marks : 0}/${q.marks}</span></div>` +
+      (q.qtype === "mcq" ? `<div class="small muted" style="margin-top:6px">${(q.options || []).map((o, k) => `${"ABCDE"[k]}. ${esc(o)}`).join("<br>")}</div>` : "") +
+      `<div class="small" style="margin-top:6px">Your child answered: <b>${esc(show(q, q.response))}</b></div>${q.correct ? "" : `<div class="small">Correct answer: <b>${esc(show(q, q.answer))}</b></div>`}</div>`).join("");
+  document.getElementById("pq").onclick = () => safe(async () => printDoc(pHead("Questions and answers", r.title, ["Student: " + r.student_name, "Class: " + r.class_name, "Subject: " + subjName(r.subject), `Score: ${r.score}/${r.total}`, "Total marks: " + tot]) +
+    qs.map((q, i) => `<div class="pq"><b>${i + 1}.</b> ${esc(q.qtext)} <i>(${q.marks} mark${q.marks == 1 ? "" : "s"})</i>${q.qtype === "mcq" ? (q.options || []).map((o, k) => `<div class="o">${"ABCDE"[k]}. ${esc(o)}</div>`).join("") : ""}<div class="o">Child's answer: <b>${esc(show(q, q.response))}</b> ${q.correct ? "&#10003;" : "&#10007;"} &nbsp; Correct answer: <b>${esc(show(q, q.answer))}</b></div></div>`).join("")))();
+  document.getElementById("dl").onclick = () => {
+    const rows = [["No.", "Question", "Options", "Marks", "Child's answer", "Correct answer", "Result"]].concat(qs.map((q, i) => [i + 1, q.qtext, (q.options || []).map((o, k) => "ABCDE"[k] + ". " + o).join(" | "), q.marks, show(q, q.response), show(q, q.answer), q.correct ? "Correct" : "Wrong"]));
+    const l = document.createElement("a"); l.href = URL.createObjectURL(new Blob(["\ufeff" + rows.map(x => x.map(v => `"${String(v ?? "").replace(/"/g, '""')}"`).join(",")).join("\n")], { type: "text/csv" }));
+    l.download = title.replace(/\W+/g, "_") + ".csv"; l.click();
+  };
+}
 async function examsView() {
   const ex = await all("exams", "*", q => q.order("id", { ascending: false }));
   const at = await all("attempts", "id,exam_id,score,total", q => q.order("id"));
@@ -126,9 +256,9 @@ async function examsView() {
     const a = at.filter(x => x.exam_id === e.id), ps = a.map(pct);
     const avg = ps.length ? (ps.reduce((s, v) => s + v, 0) / ps.length).toFixed(1) + "%" : "–";
     const pass = ps.length ? Math.round(ps.filter(v => v >= e.pass_mark).length / ps.length * 100) + "%" : "–";
-    return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.subject)}</td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${a.length}</td><td>${avg}</td><td>${pass}</td><td><button class="b g sm" data-pr="${e.id}">Print results</button></td></tr>`;
+    return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.subject)}</td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${a.length}</td><td>${avg}</td><td>${pass}</td><td><button class="btn sm" data-pr="${e.id}">Print results</button></td></tr>`;
   }).join("");
-  app.innerHTML = `<h1>Your exams</h1><div class="card scroll">${ex.length ? `<table><tr><th>Exam</th><th>Subject</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th><th></th></tr>${rows}</table>` : `<p>No exams yet. Results appear here after the school admin uploads them.</p>`}</div>`;
+  app.innerHTML = `<div class="pagehead"><div><h1>Your exams</h1><p>Results appear here after the school admin uploads them.</p></div></div><div class="card scroll">${ex.length ? `<table><tr><th>Exam</th><th>Subject</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th><th></th></tr>${rows}</table>` : `<p>No exams yet. Results appear here after the school admin uploads them.</p>`}</div>`;
   app.querySelectorAll("button[data-pr]").forEach(b => b.onclick = () => printResults(+b.dataset.pr));
 }
 async function examView(id, tab) {
@@ -140,8 +270,8 @@ async function examView(id, tab) {
   let body = "";
   if (tab === "results") {
     body = `<div class="card scroll"><table><tr><th>Student</th><th>ID</th><th>Class</th><th>Score</th><th>%</th><th>Result</th><th>Tab switches</th><th></th></tr>` +
-      at.map(a => { const p = pct(a); return `<tr><td>${esc(a.student_name)}</td><td>${esc(a.student_username)}</td><td>${esc(a.class_name)}</td><td>${a.score}/${a.total}</td><td>${p.toFixed(1)}</td><td class="${p >= e.pass_mark ? "ok" : "bad"}">${p >= e.pass_mark ? "Pass" : "Fail"}</td><td>${a.tab_switches}</td><td><a href="#/exam/${id}/attempt/${a.id}">Review</a></td></tr>`; }).join("") +
-      `</table></div><button class="b" id="csv">Download CSV</button>`;
+      at.map(a => { const p = pct(a); return `<tr><td>${esc(a.student_name)}</td><td>${esc(a.student_username)}</td><td>${esc(a.class_name)}</td><td>${a.score}/${a.total}</td><td>${p.toFixed(1)}</td><td><span class="badge ${p >= e.pass_mark ? "ok" : "bad"}">${p >= e.pass_mark ? "Pass" : "Fail"}</span></td><td>${a.tab_switches}</td><td><a href="#/exam/${id}/attempt/${a.id}">Review</a></td></tr>`; }).join("") +
+      `</table></div><button class="btn primary" id="csv">Download CSV</button>`;
   } else {
     const qs = await all("questions", "*", q => q.eq("exam_id", id).order("pos"));
     if (tab === "questions") {
@@ -155,9 +285,9 @@ async function examView(id, tab) {
       }).join("") + `</table></div>`;
     }
   }
-  app.innerHTML = `<p><a href="#/">← All exams</a></p><h1>${esc(e.title)}</h1><p class="muted"><a href="#/subject/${encodeURIComponent(subjName(e.subject))}">${esc(e.subject)}</a> ${esc(e.target_class)} · pass mark ${e.pass_mark}% · ${e.duration_min} min</p>
-  <div class="stats"><div><b>${n}</b><span>Students</span></div><div><b>${st[0]}</b><span>Average</span></div><div><b>${st[1]}</b><span>Highest</span></div><div><b>${st[2]}</b><span>Lowest</span></div><div><b>${st[3]}</b><span>Pass rate</span></div></div>
-  <div class="pbar"><span class="muted">Print:</span><button class="b g sm" id="pr1">Results sheet</button><button class="b g sm" id="pr2">Item analysis</button><button class="b g sm" id="pr3">Question paper</button><button class="b g sm" id="pr4">Marking scheme</button><button class="b g sm" id="pr5">All student reports</button></div>
+  app.innerHTML = `<div class="crumbs"><a href="#/">Exams</a> / Results</div><h1>${esc(e.title)}</h1><p class="muted"><a href="#/subject/${encodeURIComponent(subjName(e.subject))}">${esc(e.subject)}</a> ${esc(e.target_class)} · pass mark ${e.pass_mark}% · ${e.duration_min} min</p>
+  <div class="stats"><div class="stat"><b>${n}</b><span>Students</span></div><div class="stat"><b>${st[0]}</b><span>Average</span></div><div class="stat"><b>${st[1]}</b><span>Highest</span></div><div class="stat"><b>${st[2]}</b><span>Lowest</span></div><div class="stat"><b>${st[3]}</b><span>Pass rate</span></div></div>
+  <div class="pbar"><span class="muted">Print:</span><button class="btn sm" id="pr1">Results sheet</button><button class="btn sm" id="pr2">Item analysis</button><button class="btn sm" id="pr3">Question paper</button><button class="btn sm" id="pr4">Marking scheme</button><button class="btn sm" id="pr5">All student reports</button></div>
   <div class="tabs">${["results", "analysis", "questions"].map(t => `<a href="#/exam/${id}/${t}" class="${t === tab ? "on" : ""}">${t[0].toUpperCase() + t.slice(1)}</a>`).join("")}</div>${body}`;
   document.getElementById("pr1").onclick = () => printResults(id);
   document.getElementById("pr2").onclick = () => printAnalysis(id);
@@ -173,27 +303,28 @@ async function examView(id, tab) {
 }
 async function attemptView(eid, aid) {
   const { data: a } = await sb.from("attempts").select("*").eq("id", aid).single();
+  if (!a) throw new Error("Attempt not found.");
   const qs = await all("questions", "*", q => q.eq("exam_id", eid).order("pos"));
   const an = await all("answers", "*", q => q.eq("attempt_id", aid).order("question_id"));
-  if (!a) throw new Error("Attempt not found.");
   const { data: ex } = await sb.from("exams").select("*").eq("id", eid).single();
   const show = (q, v) => v == null || v === "" ? "No answer" : q.qtype === "mcq" ? `${esc(v)}. ${esc((q.options || [])["ABCDE".indexOf(String(v).toUpperCase())] ?? "")}` : esc(v);
-  app.innerHTML = `<p><a href="#/exam/${eid}">← Back to results</a></p><h1>${esc(a.student_name)}</h1><p class="muted">${esc(a.student_username)} · ${esc(a.class_name)} · ${a.score}/${a.total} (${pct(a).toFixed(1)}%)</p><div class="pbar"><button class="b sm" id="prs">Print this student's report</button></div><div class="card">` +
-    qs.map((q, i) => { const r = an.find(x => x.question_id === q.id);
-      return `<div class="q"><b>${i + 1}. ${esc(q.qtext)}</b><br>Student: <span class="${r && r.correct ? "ok" : "bad"}">${show(q, r && r.response)} ${r && r.correct ? "✓" : "✗"}</span><br>Correct: ${show(q, q.answer.split("|")[0])}</div>`; }).join("") + `</div>`;
+  app.innerHTML = `<div class="pagehead"><div><div class="crumbs"><a href="#/">Exams</a> / <a href="#/exam/${eid}">${esc(ex.title)} results</a> / ${esc(a.student_name)}</div><h1>${esc(a.student_name)} <span class="muted" style="font-weight:500">${esc(a.student_username)}</span></h1><p>${esc(a.class_name || "No class")} · submitted ${esc(fdt(a.submitted_at))}</p></div><div class="row no-print"><button class="btn" id="prs">Print</button></div></div>
+  <div class="pill-row"><div class="pill"><b>${a.score} / ${a.total}</b><span>Score</span></div><div class="pill"><b>${pct(a).toFixed(1)}%</b><span>Percent</span></div><div class="pill"><b>${a.tab_switches}</b><span>Times left the exam tab</span></div></div>` +
+    qs.map((q, i) => { const r = an.find(x => x.question_id === q.id), ok = r && r.correct;
+      return `<div class="rev ${ok ? "ok" : "bad"}"><div class="row between"><div><span class="qnum">${i + 1}.</span><b>${esc(q.qtext)}</b></div><span class="badge ${ok ? "ok" : "bad"}">${ok ? "Correct" : "Wrong"} · ${ok ? q.marks : 0}/${q.marks}</span></div><div class="small" style="margin-top:6px">Student answered: <b>${show(q, r && r.response)}</b></div>${ok ? "" : `<div class="small">Correct answer: <b>${show(q, q.answer.split("|")[0])}</b></div>`}</div>`; }).join("");
   document.getElementById("prs").onclick = async () => printDoc(await reportHTML(ex, a, qs, an));
 }
 async function uploadView() {
-  app.innerHTML = `<h1>Upload results</h1><div class="card"><p>Choose the <b>rexxhub-results-….json</b> file made by <code>export_online.py</code> on the exam computer.</p><input type="file" id="file" accept=".json"><div id="pv"></div></div>`;
+  app.innerHTML = `<div class="pagehead"><div><h1>Upload results</h1></div></div><div class="card"><p>Choose the <b>rexxhub-results-….json</b> file made by <code>export_online.py</code> on the exam computer.</p><input type="file" id="file" accept=".json"><div id="pv"></div></div>`;
   document.getElementById("file").onchange = async ev => {
     const pv = document.getElementById("pv");
     try {
       const d = JSON.parse(await ev.target.files[0].text());
       if (d.version !== 1 || !Array.isArray(d.exams)) throw new Error("This is not a Rexx Hub results file.");
       const { data: s } = await sb.from("settings").select("value").eq("key", "install_id").maybeSingle();
-      const warn = s && s.value !== d.install_id ? `<div class="msg">This file comes from a different exam database than earlier uploads. If the exam app was reinstalled, uploading can overwrite old exams that share the same numbers. Continue only if you are sure.</div>` : "";
+      const warn = s && s.value !== d.install_id ? `<div class="flash info">This file comes from a different exam database than earlier uploads. If the exam app was reinstalled, uploading can overwrite old exams that share the same numbers. Continue only if you are sure.</div>` : "";
       const na = d.exams.reduce((t, x) => t + x.attempts.length, 0);
-      pv.innerHTML = `${warn}<p><b>${d.exams.length}</b> exam(s), <b>${na}</b> submission(s):</p><ul>${d.exams.map(x => `<li>${esc(x.exam.title)} (teacher ${esc(x.exam.teacher_username)}, ${x.attempts.length} submissions)</li>`).join("")}</ul><button class="b" id="go">Upload now</button> <span id="pr"></span>`;
+      pv.innerHTML = `${warn}<p><b>${d.exams.length}</b> exam(s), <b>${na}</b> submission(s):</p><ul>${d.exams.map(x => `<li>${esc(x.exam.title)} (teacher ${esc(x.exam.teacher_username)}, ${x.attempts.length} submissions)</li>`).join("")}</ul><button class="btn primary" id="go">Upload now</button> <span id="pr"></span>`;
       document.getElementById("go").onclick = async () => {
         document.getElementById("go").disabled = true;
         for (let i = 0; i < d.exams.length; i++) {
@@ -204,13 +335,13 @@ async function uploadView() {
         await sb.from("settings").upsert({ key: "install_id", value: d.install_id });
         document.getElementById("pr").innerHTML = `<span class="ok">Done. Teachers can see the results now.</span>`;
       };
-    } catch (e) { pv.innerHTML = `<div class="msg">${esc(e.message)}</div>`; }
+    } catch (e) { pv.innerHTML = `<div class="flash info">${esc(e.message)}</div>`; }
   };
 }
 async function teachersView() {
-  const ps = await all("profiles", "*", q => q.order("created_at"));
-  app.innerHTML = `<h1>Teachers</h1><div class="card scroll"><p class="muted">The exam-app username must match the teacher's username in the offline app, because it decides which exams they see.</p><table><tr><th>Name</th><th>Exam-app username</th><th>Role</th><th>Status</th><th></th></tr>` +
-    ps.map(p => `<tr><td>${esc(p.full_name)}</td><td><input data-u="${p.id}" value="${esc(p.offline_username)}" style="margin:0;width:150px"></td><td>${p.role}</td><td class="${p.status === "approved" ? "ok" : "bad"}">${p.status}</td><td>${p.id === me.id ? "" : `<button class="b" data-s="approved" data-id="${p.id}">Approve</button> <button class="b g" data-s="disabled" data-id="${p.id}">Disable</button>`}</td></tr>`).join("") + `</table></div>`;
+  const ps = await all("profiles", "*", q => q.neq("role", "parent").order("created_at"));
+  app.innerHTML = `<div class="pagehead"><div><h1>Teachers</h1></div></div><div class="card scroll"><p class="muted">The exam-app username must match the teacher's username in the offline app, because it decides which exams they see.</p><table><tr><th>Name</th><th>Exam-app username</th><th>Role</th><th>Status</th><th></th></tr>` +
+    ps.map(p => `<tr><td>${esc(p.full_name)}</td><td><input type="text" data-u="${p.id}" value="${esc(p.offline_username)}" style="margin:0;width:150px"></td><td>${p.role}</td><td class="${p.status === "approved" ? "ok" : "bad"}">${p.status}</td><td>${p.id === me.id ? "" : `<button class="btn primary" data-s="approved" data-id="${p.id}">Approve</button> <button class="btn" data-s="disabled" data-id="${p.id}">Disable</button>`}</td></tr>`).join("") + `</table></div>`;
   app.querySelectorAll("button[data-id]").forEach(b => b.onclick = async () => {
     const u = app.querySelector(`input[data-u="${b.dataset.id}"]`).value.trim();
     const { error } = await sb.from("profiles").update({ status: b.dataset.s, offline_username: u }).eq("id", b.dataset.id);
@@ -240,7 +371,7 @@ function printDoc(html, landscape) {
     .then(() => setTimeout(() => window.print(), 100));
 }
 window.addEventListener("afterprint", () => { document.getElementById("printArea").innerHTML = ""; });
-const pHead = (sub, title, lines) => `<div class="ph"><img src="logo.png" alt=""><div><div class="pt">REXVA CBT</div><div class="ps">${esc(sub)}</div></div></div><h2 class="pdt">${esc(title)}</h2><div class="pm">${lines.filter(Boolean).map(esc).join(" &nbsp;|&nbsp; ")}</div>`;
+const pHead = (sub, title, lines) => `<div class="ph"><img src="brand/logo.png" alt=""><div><div class="pt">REXVA CBT</div><div class="ps">${esc(sub)}</div></div></div><h2 class="pdt">${esc(title)}</h2><div class="pm">${lines.filter(Boolean).map(esc).join(" &nbsp;|&nbsp; ")}</div>`;
 const examMeta = (e, tn) => ["Subject: " + subjName(e.subject), e.target_class && "Class: " + e.target_class, "Teacher: " + tn, "Pass mark: " + e.pass_mark + "%", e.duration_min && "Duration: " + e.duration_min + " min", e.opens_at && "Date: " + fd(e.opens_at)];
 const sigBlock = `<div class="sig"><div>Subject teacher</div><div>Head of department</div><div>Principal / Date</div></div>`;
 const stats = (list, pm) => {
@@ -333,9 +464,9 @@ const subjStats = s => {
 };
 async function subjectsView() {
   const g = await loadSubjects(), list = Object.entries(g).sort((a, b) => a[1].name.localeCompare(b[1].name));
-  app.innerHTML = `<h1>Subjects</h1><div class="pbar"><button class="b" id="pall">Print all subjects summary</button></div><div class="card scroll">` + (list.length ? `<table><tr><th>Subject</th><th>Exams</th><th>Classes</th>${me.role === "admin" ? "<th>Teachers</th>" : ""}<th>Submissions</th><th>Average</th><th>Pass rate</th><th></th></tr>` +
+  app.innerHTML = `<div class="pagehead"><div><h1>Subjects</h1><p>Every exam grouped by subject.</p></div></div><div class="pbar"><button class="btn primary" id="pall">Print all subjects summary</button></div><div class="card scroll">` + (list.length ? `<table><tr><th>Subject</th><th>Exams</th><th>Classes</th>${me.role === "admin" ? "<th>Teachers</th>" : ""}<th>Submissions</th><th>Average</th><th>Pass rate</th><th></th></tr>` +
     list.map(([k, s]) => { const st = subjStats(s);
-      return `<tr><td><a href="#/subject/${encodeURIComponent(s.name)}">${esc(s.name)}</a></td><td>${s.exams.length}</td><td>${esc([...new Set(s.exams.map(e => e.target_class).filter(Boolean))].join(", "))}</td>${me.role === "admin" ? `<td>${esc([...new Set(s.exams.map(e => e.teacher_username))].join(", "))}</td>` : ""}<td>${st.n}</td><td>${st.n ? st.avg.toFixed(1) + "%" : "–"}</td><td>${st.n ? Math.round(st.pass) + "%" : "–"}</td><td><button class="b g sm" data-k="${esc(k)}">Print mark sheet</button></td></tr>`; }).join("") + `</table>` : `<p>No subjects yet. They appear after results are uploaded.</p>`) + `</div>`;
+      return `<tr><td><a href="#/subject/${encodeURIComponent(s.name)}">${esc(s.name)}</a></td><td>${s.exams.length}</td><td>${esc([...new Set(s.exams.map(e => e.target_class).filter(Boolean))].join(", "))}</td>${me.role === "admin" ? `<td>${esc([...new Set(s.exams.map(e => e.teacher_username))].join(", "))}</td>` : ""}<td>${st.n}</td><td>${st.n ? st.avg.toFixed(1) + "%" : "–"}</td><td>${st.n ? Math.round(st.pass) + "%" : "–"}</td><td><button class="btn sm" data-k="${esc(k)}">Print mark sheet</button></td></tr>`; }).join("") + `</table>` : `<p>No subjects yet. They appear after results are uploaded.</p>`) + `</div>`;
   app.querySelectorAll("button[data-k]").forEach(b => b.onclick = () => printSubject(b.dataset.k));
   document.getElementById("pall").onclick = () => printAllSubjects();
 }
@@ -343,10 +474,10 @@ async function subjectView(name) {
   const g = await loadSubjects(), s = g[subjKey(name === "No subject" ? "" : name)];
   if (!s) throw new Error("Subject not found.");
   const st = subjStats(s);
-  app.innerHTML = `<p><a href="#/subjects">← All subjects</a></p><h1>${esc(s.name)}</h1><p class="muted">${s.exams.length} exam(s) · ${st.n} submission(s)${st.n ? ` · average ${st.avg.toFixed(1)}% · pass rate ${Math.round(st.pass)}%` : ""}</p>
-  <div class="pbar"><button class="b" id="pms">Print subject mark sheet</button></div><div class="card scroll"><table><tr><th>Exam</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th><th></th></tr>` +
+  app.innerHTML = `<div class="crumbs"><a href="#/subjects">Subjects</a></div><h1>${esc(s.name)}</h1><p class="muted">${s.exams.length} exam(s) · ${st.n} submission(s)${st.n ? ` · average ${st.avg.toFixed(1)}% · pass rate ${Math.round(st.pass)}%` : ""}</p>
+  <div class="pbar"><button class="btn primary" id="pms">Print subject mark sheet</button></div><div class="card scroll"><table><tr><th>Exam</th><th>Class</th>${me.role === "admin" ? "<th>Teacher</th>" : ""}<th>Students</th><th>Average</th><th>Pass rate</th><th></th></tr>` +
     s.exams.map(e => { const a = s.att.filter(x => x.exam_id === e.id), q = stats(a, e.pass_mark);
-      return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${q.n}</td><td>${q.n ? q.avg.toFixed(1) + "%" : "–"}</td><td>${q.n ? Math.round(q.pass) + "%" : "–"}</td><td><button class="b g sm" data-pr="${e.id}">Print results</button> <button class="b g sm" data-pp="${e.id}">Question paper</button></td></tr>`; }).join("") + `</table></div>`;
+      return `<tr><td><a href="#/exam/${e.id}">${esc(e.title)}</a></td><td>${esc(e.target_class)}</td>${me.role === "admin" ? `<td>${esc(e.teacher_username)}</td>` : ""}<td>${q.n}</td><td>${q.n ? q.avg.toFixed(1) + "%" : "–"}</td><td>${q.n ? Math.round(q.pass) + "%" : "–"}</td><td><button class="btn sm" data-pr="${e.id}">Print results</button> <button class="btn sm" data-pp="${e.id}">Question paper</button></td></tr>`; }).join("") + `</table></div>`;
   document.getElementById("pms").onclick = () => printSubject(subjKey(s.name === "No subject" ? "" : s.name));
   app.querySelectorAll("button[data-pr]").forEach(b => b.onclick = () => printResults(+b.dataset.pr));
   app.querySelectorAll("button[data-pp]").forEach(b => b.onclick = () => printPaper(+b.dataset.pp, false));
@@ -374,6 +505,16 @@ const printAllSubjects = safe(async () => {
 });
 
 window.addEventListener("hashchange", route);
-sb.auth.onAuthStateChange(() => {});
+sb.auth.onAuthStateChange(ev => { if (ev === "PASSWORD_RECOVERY") location.hash = "#/password"; });
+["click", "keydown", "mousemove", "touchstart", "scroll"].forEach(v => addEventListener(v, () => { if (!document.getElementById("idlem")) last = Date.now(); }, { passive: true }));
+setInterval(() => {   // auto sign-out: parents after 15 minutes idle, staff after 30
+  if (!me) return;
+  const left = (me.role === "parent" ? 15 : 30) * 60000 - (Date.now() - last), m = document.getElementById("idlem");
+  if (left <= 0) { if (m) m.remove(); signOut("You were signed out after a period of inactivity."); }
+  else if (left < 60000 && !m) {
+    document.body.insertAdjacentHTML("beforeend", `<div class="modal" id="idlem"><div class="box"><h3>Still there?</h3><p>For your security you will be signed out in about a minute.</p><button class="btn primary" id="stay">Stay signed in</button></div></div>`);
+    document.getElementById("stay").onclick = () => { document.getElementById("idlem").remove(); last = Date.now(); };
+  }
+}, 5000);
 route();
-</script></body></html>
+</script><script src="clock.js"></script></body></html>
