@@ -5,7 +5,12 @@ LOOK: style.css, clock.js, fonts/ and brand/ are copied unchanged from the offli
 
 SETUP (existing Supabase project)
  1. Supabase > SQL Editor > run upgrade_parent_portal.sql once. (schema.sql = original + this upgrade, for new projects.)
-    If you ran the earlier version of the upgrade, run the file again: it is safe to repeat.
+    Running it again is safe.
+ 1b. SYNC BUTTON: at the very end of upgrade_parent_portal.sql is one commented line. Put a long secret (20+ random
+    characters) in it, remove the leading "--", run it, then enter the SAME secret in the offline app:
+    Admin > Sync online > Sync key. Project URL = your Supabase URL; Anon key = the publishable key in index.html.
+    After that, "Sync now" makes results visible to teachers and approved parents straight away.
+    If the exam app is ever reinstalled, sync stops with a message; run: delete from settings where key='install_id';
  2. Supabase > Authentication > URL Configuration: set Site URL to your hosted page and add it under
     Redirect URLs (needed for e-mail confirmation and "Forgot password").
  3. Authentication > Providers > Email: keep "Confirm email" ON; set minimum password length to 10.

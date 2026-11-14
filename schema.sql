@@ -177,3 +177,64 @@ language sql security definer stable set search_path=public as $$
   order by q.pos, q.id $$;
 revoke all on function parent_exam_review(bigint,text) from public, anon;
 grant execute on function parent_exam_review(bigint,text) to authenticated;
+
+-- ===== SYNC ONLINE (offline app "Sync online" button) =====
+-- Same import as the manual upload, but callable without a login by the offline app, protected by a secret sync key.
+create or replace function do_import_exam(p jsonb) returns void language plpgsql security definer set search_path=public as $$
+declare e jsonb := p->'exam'; eid bigint := (p->'exam'->>'id')::bigint;
+begin
+  insert into exams(id,teacher_username,title,subject,duration_min,target_class,pass_mark,opens_at,closes_at,uploaded_at)
+  values(eid,e->>'teacher_username',e->>'title',e->>'subject',(e->>'duration_min')::int,e->>'target_class',
+         coalesce((e->>'pass_mark')::numeric,50),to_timestamp((e->>'opens_at')::bigint),to_timestamp((e->>'closes_at')::bigint),now())
+  on conflict(id) do update set teacher_username=excluded.teacher_username,title=excluded.title,subject=excluded.subject,
+    duration_min=excluded.duration_min,target_class=excluded.target_class,pass_mark=excluded.pass_mark,
+    opens_at=excluded.opens_at,closes_at=excluded.closes_at,uploaded_at=now();
+
+  delete from questions where exam_id=eid and id not in (select (x->>'id')::bigint from jsonb_array_elements(p->'questions') x);
+  insert into questions(id,exam_id,pos,qtype,qtext,options,answer,marks)
+    select id,eid,pos,qtype,qtext,options,answer,marks
+    from jsonb_to_recordset(p->'questions') as x(id bigint,pos int,qtype text,qtext text,options jsonb,answer text,marks numeric)
+  on conflict(id) do update set pos=excluded.pos,qtype=excluded.qtype,qtext=excluded.qtext,
+    options=excluded.options,answer=excluded.answer,marks=excluded.marks;
+
+  delete from attempts where exam_id=eid and id not in (select (x->>'id')::bigint from jsonb_array_elements(p->'attempts') x);
+  insert into attempts(id,exam_id,student_username,student_name,class_name,started_at,submitted_at,score,total,tab_switches)
+    select id,eid,student_username,student_name,class_name,to_timestamp(started_at),to_timestamp(submitted_at),score,total,tab_switches
+    from jsonb_to_recordset(p->'attempts') as x(id bigint,student_username text,student_name text,class_name text,
+      started_at bigint,submitted_at bigint,score numeric,total numeric,tab_switches int)
+  on conflict(id) do update set student_username=excluded.student_username,student_name=excluded.student_name,
+    class_name=excluded.class_name,started_at=excluded.started_at,submitted_at=excluded.submitted_at,
+    score=excluded.score,total=excluded.total,tab_switches=excluded.tab_switches;
+
+  delete from answers where exam_id=eid;
+  insert into answers(attempt_id,question_id,exam_id,response,correct)
+    select attempt_id,question_id,eid,response,correct
+    from jsonb_to_recordset(p->'answers') as y(attempt_id bigint,question_id bigint,response text,correct boolean);
+end $$;
+revoke all on function do_import_exam(jsonb) from public, anon, authenticated;
+
+create or replace function import_exam(p jsonb) returns void language plpgsql security definer set search_path=public as $$
+begin
+  if not is_admin() then raise exception 'Only an approved admin can upload results'; end if;
+  perform do_import_exam(p);
+end $$;
+
+create or replace function import_exam_sync(k text, inst text, p jsonb) returns void language plpgsql security definer set search_path=public as $$
+declare h text := (select value from settings where key='sync_key_hash'); old text := (select value from settings where key='install_id');
+begin
+  if h is null or encode(sha256(convert_to(coalesce(k,''),'utf8')),'hex') <> h then
+    perform pg_sleep(1);   -- slows down guessing
+    raise exception 'Wrong sync key';
+  end if;
+  if old is not null and old <> inst then
+    raise exception 'This exam database differs from earlier syncs (app reinstalled?). If that is expected, run in SQL Editor: delete from settings where key=''install_id'';';
+  end if;
+  perform do_import_exam(p);
+  insert into settings(key,value) values('install_id',inst) on conflict (key) do update set value=excluded.value;
+end $$;
+revoke all on function import_exam_sync(text,text,jsonb) from public;
+grant execute on function import_exam_sync(text,text,jsonb) to anon, authenticated;
+
+-- ONE-TIME: choose a long secret (20+ random characters), put it here, run this line, then type the SAME secret
+-- in the offline app: Admin > Sync online > Sync key. Change the text between the quotes first!
+-- insert into settings(key,value) values('sync_key_hash', encode(sha256(convert_to('PUT-YOUR-LONG-SECRET-HERE','utf8')),'hex')) on conflict (key) do update set value=excluded.value;
