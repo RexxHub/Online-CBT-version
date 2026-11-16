@@ -1,12 +1,12 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'"><meta name="referrer" content="no-referrer">
-<title>REXVA CBT · Online</title><link rel="icon" type="image/png" href="brand/favicon.png">
+<title>Sign in to REXVA CBT · Online</title><link rel="icon" type="image/png" href="brand/favicon.png">
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="online.css">
 </head><body>
 <header class="topbar no-print"><div class="inner"><a class="brand" href="#/"><img class="logo" src="brand/logo.png" alt="" width="36" height="36"><em>REXVA CBT</em></a><nav id="nav"></nav><div class="who" id="who"></div></div></header>
 <main id="app"></main>
-<footer class="sitefooter mainfoot no-print"><div class="inner"><span class="fbrand"><img class="logo" src="brand/logo.png" alt="" width="22" height="22">Rexx<em>Hub</em></span><span class="fmeta">Exams Offline, Results Online &middot; &copy; <span id="yr"></span> Rexx Hub &middot; V1.3.0</span></div></footer>
+<footer class="sitefooter mainfoot no-print"><div class="inner"><span class="fbrand"><img class="logo" src="brand/logo.png" alt="" width="22" height="22">Rexx<em>Hub</em></span><span class="fmeta">Exams Offline, Results Online &middot; &copy; <span id="yr"></span> REXVA CBT &middot; V1.3.0</span></div></footer>
 <div id="printArea"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 <script>
@@ -37,7 +37,7 @@ async function all(table, sel, f) {
 }
 const EYE1 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const EYE0 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.8 19.8 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 7 11 7a19.9 19.9 0 0 1-3.17 4.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
-const FOOT = `<footer class="sitefooter"><div class="inner"><span class="fbrand"><img class="logo" src="brand/logo.png" alt="" width="22" height="22">Rexx<em>Hub</em></span><span class="fmeta">Exams Offline, Results Online &middot; &copy; ${new Date().getFullYear()} Rexx Hub &middot; V1.3.0</span></div></footer>`;
+const FOOT = `<footer class="sitefooter"><div class="inner"><span class="fbrand"><img class="logo" src="brand/logo.png" alt="" width="22" height="22">Rexx<em>Hub</em></span><span class="fmeta">Exams Offline, Results Online &middot; &copy; ${new Date().getFullYear()} REXVA CBT &middot; V1.3.0</span></div></footer>`;
 const REL = ["Mother", "Father", "Guardian", "Other"].map(r => `<option>${r}</option>`).join("");
 const normId = s => String(s || "").toLowerCase().replace(/[\s-]/g, "");
 const okPw = p => p.length >= 10 && /[a-z]/i.test(p) && /\d/.test(p);
@@ -84,9 +84,9 @@ function nav() {
 }
 function loginView(msg, ok) {
   const m = msg || notice; notice = "";
-  authPage(`<div class="loginhead"><img class="loginlogo" src="brand/logo.png" alt="" width="108" height="108"><h1 class="loginname">REXVA CBT</h1><p class="tag">Exams Offline, Results Online</p></div>
+  authPage(`<div class="loginhead"><img class="loginlogo" src="brand/logo.png" alt="" width="108" height="108"><h1 class="loginname"><strong>REXVA CBT</strong></h1><p class="tag">Exams Offline, Results Online</p></div>
   <div class="authcard"><div id="fm" role="alert"></div>
-  <form id="f"><div class="field"><select class="rolesel" id="role" aria-label="Who is signing in"><option value="teacher">I am a teacher</option><option value="parent">I am a parent</option><option value="admin">I am an admin</option></select></div>
+  <form id="f"><div class="field"><select class="rolesel" id="role" aria-label="Who is signing in"><option value="teacher">Teacher</option><option value="parent">Parent</option><option value="admin">Admin</option></select></div>
   <div class="field"><label for="em">Email</label><input id="em" type="email" autocomplete="username" autofocus required placeholder="you@example.com"></div>
   <div class="field"><label for="pw">Password</label>${pwBox("pw", "current-password")}</div>
   <label class="check"><input type="checkbox" id="keep"> Keep me signed in on this device</label>
@@ -132,7 +132,7 @@ function registerView() {
   authPage(`<div class="authcard wide"><div class="brand"><img class="logo" src="brand/logo.png" alt="" width="36" height="36"><em>REXVA CBT</em></div>
   <p class="tag">Create a teacher or parent account. Teachers are approved by the school admin. A parent sees results only after the school confirms the child link.</p>
   <div id="fm" role="alert"></div>
-  <form id="f"><div class="field"><select class="rolesel" id="kind"><option value="parent">I am a parent</option><option value="teacher">I am a teacher</option></select></div>
+  <form id="f"><div class="field"><select class="rolesel" id="kind"><option value="parent">Parent</option><option value="teacher">Teacher</option></select></div>
   <div class="cols2"><div class="field"><label>Full name</label><input type="text" id="fn" required maxlength="80"></div><div class="field"><label>Email</label><input type="email" id="em" required autocomplete="username"></div></div>
   <fieldset id="gp" class="fs"><div class="cols2"><div class="field"><label>Child's Student ID</label><input type="text" id="cid" required maxlength="40" autocomplete="off" placeholder="e.g. ADAOKA-7K3QD"></div><div class="field"><label>Child's full name</label><input type="text" id="cnm" required maxlength="80"></div></div>
   <div class="field"><label>You are the child's</label><select id="crel">${REL}</select></div></fieldset>
@@ -390,7 +390,7 @@ function printDoc(html, landscape) {
   let st = document.getElementById("pg");
   if (!st) { st = document.createElement("style"); st.id = "pg"; document.head.appendChild(st); }
   st.textContent = `@page{size:A4 ${landscape ? "landscape" : "portrait"};margin:14mm 12mm 16mm}`;
-  pa.innerHTML = html + `<div class="pf">REXVA V1.3.0 &middot; &copy; 2026 Rexx Hub &middot; Printed ${esc(new Date().toLocaleString())} by ${esc(me.full_name)}</div>`;
+  pa.innerHTML = html + `<div class="pf">REXVA V1.3.0 &middot; &copy; 2026 REXVA CBT &middot; Printed ${esc(new Date().toLocaleString())} by ${esc(me.full_name)}</div>`;
   Promise.all([...pa.querySelectorAll("img")].map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })))
     .then(() => setTimeout(() => window.print(), 100));
 }
