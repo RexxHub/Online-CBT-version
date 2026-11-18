@@ -397,7 +397,7 @@ function printDoc(html, landscape) {
 window.addEventListener("afterprint", () => { document.getElementById("printArea").innerHTML = ""; });
 const pHead = (sub, title, lines) => `<div class="ph"><img src="brand/logo.png" alt=""><div><div class="pt">REXVA CBT</div><div class="ps">${esc(sub)}</div></div></div><h2 class="pdt">${esc(title)}</h2><div class="pm">${lines.filter(Boolean).map(esc).join(" &nbsp;|&nbsp; ")}</div>`;
 const examMeta = (e, tn) => ["Subject: " + subjName(e.subject), e.target_class && "Class: " + e.target_class, "Teacher: " + tn, "Pass mark: " + e.pass_mark + "%", e.duration_min && "Duration: " + e.duration_min + " min", e.opens_at && "Date: " + fd(e.opens_at)];
-const sigBlock = `<div class="sig"><div>Subject teacher</div><div>Head of department</div><div>Principal / Date</div></div>`;
+const sigBlock = `<div class="sig"><div>Subject teacher</div><div>Form teacher</div><div>Coordinator / Date</div></div>`;
 const stats = (list, pm) => {
   const ps = list.map(pct), n = ps.length;
   return n ? { n, avg: ps.reduce((s, v) => s + v, 0) / n, hi: Math.max(...ps), lo: Math.min(...ps), pass: ps.filter(v => v >= pm).length / n * 100 } : { n: 0 };
