@@ -78,7 +78,7 @@ function nav() {
   const h = location.hash.slice(1) || "/", a = (href, txt, on) => `<a href="#${href}" class="${on ? "on" : ""}">${txt}</a>`;
   n.innerHTML = me.role === "parent" ? a("/", "My children", h === "/") :
     a("/", "Exams", h === "/" || h.startsWith("/exam")) + a("/subjects", "Subjects", h.startsWith("/subject")) +
-    (me.role === "admin" ? a("/parents", "Parents", h === "/parents") + a("/upload", "Upload results", h === "/upload") + a("/teachers", "Teachers", h === "/teachers") : "");
+    (me.role === "admin" ? a("/parents", "Parents", h === "/parents") + a("/upload", "Upload results", h === "/upload") + a("/teachers", "Teachers", h === "/teachers") + a("/teacher-subjects", "Teachers by subject", h === "/teacher-subjects") : "");
   w.innerHTML = `<span>${esc(me.full_name)}</span><span class="role">${esc(me.role)}</span><a href="#/password" class="linkbtn">Password</a><button class="linkbtn" id="out">Sign Out</button>`;
   document.getElementById("out").onclick = () => signOut();
 }
@@ -191,6 +191,7 @@ async function route() {
     if (h === "/parents" && me.role === "admin") return await parentsView();
     if (h === "/upload" && me.role === "admin") return await uploadView();
     if (h === "/teachers" && me.role === "admin") return await teachersView();
+    if (h === "/teacher-subjects" && me.role === "admin") return await teacherSubjectsView();
     if (h === "/subjects") return await subjectsView();
     if (p[1] === "subject") return await subjectView(decodeURIComponent(p[2] || ""));
     if (p[1] === "exam" && p[3] === "attempt") return await attemptView(+p[2], +p[4]);
@@ -472,6 +473,57 @@ const printReports = safe(async id => {
   printDoc(html);
 });
 
+/* ---- admin: teachers grouped under the subjects of the exams they uploaded (A-Z) ---- */
+async function teacherSubjectsView() {
+  const [ps, ex] = await Promise.all([all("profiles", "*", q => q.neq("role", "parent")), all("exams", "*", q => q.order("title"))]);
+  const byU = {};
+  ps.forEach(p => { const u = (p.offline_username || "").trim().toLowerCase(); if (u) byU[u] = p; });
+  const cmp = (a, b) => a.localeCompare(b, undefined, { sensitivity: "base", numeric: true });
+  const groups = {}, used = new Set();
+  ex.forEach(e => {
+    const u = (e.teacher_username || "").trim(), p = byU[u.toLowerCase()], k = subjKey(e.subject);
+    if (p) used.add(p.id);
+    const g = groups[k] = groups[k] || { name: subjName(e.subject), t: {} };
+    const tk = p ? "p" + p.id : "u" + u.toLowerCase();
+    const t = g.t[tk] = g.t[tk] || { name: (p && p.full_name) || u || "Unknown", user: u, status: p ? p.status : "not registered", exams: [], classes: new Set() };
+    t.exams.push(e);
+    if ((e.target_class || "").trim()) t.classes.add(e.target_class.trim());
+  });
+  const list = Object.entries(groups).map(([k, g]) => ({
+    k, name: k && g.name === g.name.toLowerCase() ? g.name.replace(/\b\w/g, c => c.toUpperCase()) : g.name,
+    teachers: Object.values(g.t).sort((a, b) => cmp(a.name, b.name))
+  })).sort((a, b) => (a.k === "") - (b.k === "") || cmp(a.name, b.name));
+  const idle = ps.filter(p => p.role === "teacher" && !used.has(p.id)).sort((a, b) => cmp(a.full_name || "", b.full_name || ""));
+  const nT = new Set([...used, ...list.flatMap(g => g.teachers.filter(t => t.status === "not registered").map(t => "u" + t.user))]).size + idle.length;
+  const badge = st => st === "approved" ? `<span class="badge ok">Approved</span>` : st === "pending" ? `<span class="badge warn">Pending</span>` : st === "not registered" ? `<span class="badge warn" title="Exams were uploaded under this username, but nobody has registered it online">Not registered online</span>` : `<span class="badge bad">${esc(st)}</span>`;
+  const find = (...x) => esc(x.join(" ").toLowerCase());
+  app.innerHTML = `<style>.jump{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}.examchips{display:flex;flex-wrap:wrap;gap:6px}.examchips a{text-decoration:none}.subjhead{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px}.subjhead h2{margin:0;font-size:1.15rem}</style>
+  <div class="pagehead"><div><h1>Teachers by subject</h1><p>Teachers are grouped under the subjects of the exams they uploaded, in alphabetical order. A teacher who set exams in more than one subject appears under each.</p></div></div>
+  ${list.length || idle.length ? `<div class="pbar"><button class="btn primary" id="pts">Print this list</button></div>
+  <div class="card"><input type="search" id="tfilter" placeholder="Find a teacher, username or subject" autocomplete="off" style="margin:0 0 8px"><span class="muted" id="tcount">${nT} teacher${nT === 1 ? "" : "s"} · ${list.length} subject${list.length === 1 ? "" : "s"}</span></div>
+  <div class="jump" id="jump">${list.map((g, i) => `<button type="button" class="btn sm" data-for="subj-${i}">${esc(g.name)} · ${g.teachers.length}</button>`).join("")}${idle.length ? `<button type="button" class="btn sm" data-for="subj-none">No exams yet · ${idle.length}</button>` : ""}</div>
+  ${list.map((g, i) => `<div class="card subj scroll" id="subj-${i}"><div class="subjhead"><h2>${esc(g.name)}</h2><span class="badge teal">${g.teachers.length} teacher${g.teachers.length === 1 ? "" : "s"}</span></div>
+    <table><tr><th>Teacher</th><th>Username</th><th>Status</th><th>Exams in this subject</th><th>Classes</th></tr>${g.teachers.map(t => `<tr class="trow" data-find="${find(t.name, t.user, g.name)}"><td><b>${esc(t.name)}</b></td><td>${esc(t.user)}</td><td>${badge(t.status)}</td><td><div class="examchips">${t.exams.map(e => `<a class="badge" href="#/exam/${e.id}">${esc(e.title)}</a>`).join("")}</div></td><td>${esc([...t.classes].sort(cmp).join(", ") || "All classes")}</td></tr>`).join("")}</table></div>`).join("")}
+  ${idle.length ? `<div class="card subj scroll" id="subj-none"><div class="subjhead"><h2>No exams yet</h2><span class="badge teal">${idle.length} teacher${idle.length === 1 ? "" : "s"}</span></div>
+    <table><tr><th>Teacher</th><th>Username</th><th>Status</th></tr>${idle.map(p => `<tr class="trow" data-find="${find(p.full_name, p.offline_username)}"><td><b>${esc(p.full_name)}</b></td><td>${esc(p.offline_username)}</td><td>${badge(p.status)}</td></tr>`).join("")}</table></div>` : ""}
+  <p class="muted" id="tnone" style="display:none">No teacher or subject matches your search.</p>` : `<div class="card"><p class="muted">There are no teachers or exams yet.</p></div>`}`;
+  if (!list.length && !idle.length) return;
+  app.querySelectorAll("#jump [data-for]").forEach(b => b.onclick = () => document.getElementById(b.dataset.for).scrollIntoView({ behavior: "smooth", block: "start" }));
+  document.getElementById("tfilter").oninput = ev => {
+    const t = ev.target.value.trim().toLowerCase(); let shown = 0;
+    app.querySelectorAll(".trow").forEach(r => { r.style.display = !t || r.dataset.find.includes(t) ? "" : "none"; });
+    app.querySelectorAll(".subj").forEach(sec => {
+      const n = [...sec.querySelectorAll(".trow")].filter(r => r.style.display !== "none").length;
+      sec.style.display = n ? "" : "none"; shown += n;
+      const j = app.querySelector(`#jump [data-for="${sec.id}"]`); if (j) j.style.display = n ? "" : "none";
+    });
+    document.getElementById("tnone").style.display = shown ? "none" : "";
+  };
+  document.getElementById("pts").onclick = () => printDoc(pHead("Teachers by subject", "Teachers grouped by subject", [nT + " teacher(s)", list.length + " subject(s)"]) +
+    `<table><thead><tr><th>Subject</th><th>Teacher</th><th>Username</th><th>Exams</th><th>Classes</th></tr></thead><tbody>` +
+    list.map(g => g.teachers.map((t, i) => `<tr><td>${i ? "" : "<b>" + esc(g.name) + "</b>"}</td><td>${esc(t.name)}</td><td>${esc(t.user)}</td><td>${esc(t.exams.map(e => e.title).join(", "))}</td><td>${esc([...t.classes].sort(cmp).join(", ") || "All classes")}</td></tr>`).join("")).join("") +
+    idle.map((p, i) => `<tr><td>${i ? "" : "<b>No exams yet</b>"}</td><td>${esc(p.full_name)}</td><td>${esc(p.offline_username)}</td><td></td><td></td></tr>`).join("") + `</tbody></table>`);
+}
 /* ---- subjects: group every exam by subject ---- */
 async function loadSubjects() {
   const ex = await all("exams", "*", q => q.order("id", { ascending: false }));
