@@ -3,17 +3,6 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'"><meta name="referrer" content="no-referrer">
 <title>Sign in to REXVA CBT · Online</title><link rel="icon" type="image/png" href="brand/favicon.png">
 <link rel="stylesheet" href="style.css"><link rel="stylesheet" href="online.css">
-<style id="rx-services">
-.rxsv{width:100%;max-width:440px;margin:22px auto 0;text-align:left}
-.rxsv h2{margin:0 0 4px;font-size:1.05rem;font-weight:600;text-align:center}
-.rxsv>p{margin:0 0 12px;font-size:.85rem;opacity:.7;text-align:center}
-.rxsv .rxlist{display:grid;gap:8px}
-.rxsv .rxitem{border:1px solid rgba(128,128,128,.35);border-radius:8px;padding:14px 16px}
-.rxsv .rxitem h3{margin:0 0 4px;font-size:.95rem;font-weight:600}
-.rxsv .rxitem p{margin:0;font-size:.84rem;opacity:.75;line-height:1.45}
-.rxsv .rxitem a{display:inline-block;margin-top:8px;font-size:.84rem;font-weight:500;color:#f6821f;text-decoration:none}
-.rxsv .rxitem a:hover,.rxsv .rxitem a:focus-visible{text-decoration:underline}
-</style>
 </head><body>
 <header class="topbar no-print"><div class="inner"><a class="brand" href="#/"><img class="logo" src="brand/logo.png" alt="" width="36" height="36"><em>REXVA CBT</em></a><nav id="nav"></nav><div class="who" id="who"></div></div></header>
 <main id="app"></main>
@@ -49,12 +38,6 @@ async function all(table, sel, f) {
 const EYE1 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"/><circle cx="12" cy="12" r="3"/></svg>';
 const EYE0 = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 19c-7 0-11-7-11-7a19.8 19.8 0 0 1 5.06-5.94M9.9 4.24A10.9 10.9 0 0 1 12 4c7 0 11 7 11 7a19.9 19.9 0 0 1-3.17 4.19M14.12 14.12a3 3 0 1 1-4.24-4.24"/><path d="M1 1l22 22"/></svg>';
 const FOOT = `<footer class="sitefooter"><div class="inner"><span class="fbrand"><img class="logo" src="brand/logo.png" alt="" width="22" height="22">Rexx<em>Hub</em></span><span class="fmeta">Exams Offline, Results Online &middot; &copy; ${new Date().getFullYear()} REXVA CBT &middot; V1.3.0</span></div></footer>`;
-const rxWa = t => "https://wa.me/2348103413362?text=" + encodeURIComponent("Rexx Hub enquiry: " + t);
-const SERVICES = `<section class="rxsv no-print" aria-labelledby="rxsvh"><h2 id="rxsvh">More than exams</h2><p>Rexx Hub also keeps your technology running.</p><div class="rxlist">
-  <div class="rxitem"><h3>IT support</h3><p>Fast help with computers, networks, printers and everyday technical faults, so your team keeps working.</p><a href="${rxWa("IT support")}" target="_blank" rel="noopener">Ask about IT support &rarr;</a></div>
-  <div class="rxitem"><h3>Software and system upgrade and maintenance</h3><p>Updates, upgrades, clean-ups, backups and regular checks that keep your systems fast, secure and reliable.</p><a href="${rxWa("Software and system upgrade or maintenance")}" target="_blank" rel="noopener">Ask about maintenance &rarr;</a></div>
-  <div class="rxitem"><h3>Virtual assistance</h3><p>Remote administrative support: data entry, documents, scheduling and email handling, so you can focus on your work.</p><a href="${rxWa("Virtual assistance")}" target="_blank" rel="noopener">Ask about virtual assistance &rarr;</a></div>
-</div></section>`;
 const REL = ["Mother", "Father", "Guardian", "Other"].map(r => `<option>${r}</option>`).join("");
 const normId = s => String(s || "").toLowerCase().replace(/[\s-]/g, "");
 const okPw = p => p.length >= 10 && /[a-z]/i.test(p) && /\d/.test(p);
@@ -108,7 +91,7 @@ function loginView(msg, ok) {
   <div class="field"><label for="pw">Password</label>${pwBox("pw", "current-password")}</div>
   <label class="check"><input type="checkbox" id="keep"> Keep me signed in on this device</label>
   <button class="btn primary block" type="submit">Sign In</button></form>
-  <p class="small muted" style="margin:18px 0 0;text-align:center"><a href="#" id="fg">Forgot password?</a><br>No account yet? <a href="#/register">Sign Up</a></p></div>${SERVICES}`, "loginpage");
+  <p class="small muted" style="margin:18px 0 0;text-align:center"><a href="#" id="fg">Forgot password?</a><br>No account yet? <a href="#/register">Sign Up</a></p></div>`, "loginpage");
   say(m, ok);
   const em = document.getElementById("em");
   const fg = document.getElementById("fg");
